@@ -11,5 +11,78 @@
 %% mogelijke manier toegepast hebt om een antwoord te vinden op de
 %% onderzoeksvraag.
 
-\lipsum[21-25]
+\section{Inleiding}
+
+Voor het analyseren van het performantieverschil tussen REST en gRPC is er voor beide technologiën een server nodig die een api aanbiedt dat geconsumeerd kan worden en
+een client die deze server aanroept. De tijdsduur tussen de start en einde van de request, nl. het aanroepen van het api door de client
+tot het moment waarop alle gevraagde data bij de client toegekomen is,vormt het belangrijkste vergelijkingspunt.
+Naast de duurtijd wordt er gekeken worden naar de grootte van de originele dataset die verstuurd wordt gezien REST en gRPC
+een verschillend serialisatieproces hanteren waarbij deze laatste technologie compressie zal toepassen.
+
+\section{Praktisch}
+
+Voor alle stadia van het onderzoek wordt er gebruik gemaakt van een java applicatie die zowel een REST en gRPC api aanbiedt.
+In casu zal het gaan om een api's die toelaten een lijst van fictieve personen op te vragen. Het aantal personen dat verzonden wordt moet door de client worden aangegeven.
+De eerste keer dat een lijst wordt opgevraagd wordt de data gegenereerd en opgeslagen in het geheugen van de applicatie volgens het aantal gevraagde objecten.
+Een persoon instantie bevat 5 variabelen die tijdens het genereren van de data m.b.v.\ RandomStringUtils~\parencite{RandomStringUtils}
+en RandomDataGenerator~\parencite{RandomDataGenerator} van Apache Commons opgevuld worden met willekeurige tekst of cijfers naargelang het type van variabele.
+Voor elk gevraagd aantal zal de eerste request dus als opwarming dienen en niet bruikbaar zijn als vergelijk tussen beide technologiën.
+De java applicatie is ontwikkeld met behulp van het Quarkus framework. Quarkus biedt zowel ondersteuning voor REST als voor gRPC.
+Voor de REST api maakt Quarkus gebruik van RESTEasy Reactive, een Jakarta REST implementatie. Jakarta REST is een REST API standaard voor Java.
+Het serialisatieproces naar JSON gebeurd met Jackson. Voor het gRPC api wordt gestart vanaf Quarkus' Getting Started With gRPC tutorial~\parencite{quarkusgRPC}
+Gradle is tot slot gekozen voor dependency management en het builden van de applicatie.
+
+De broncode van deze applicatie is publiek beschikbaar op Github via https://github.com/thiersnicolas/gRPC_vs_REST.git
+
+%%?Deploy to openshift
+%%?TLS
+
+%%?postman = geen deserialisatie, best voor fase 1 ook client gebruiken!
+
+~\autocite{quarkusAbout}\\
+~\autocite{quarkusREST}\\
+~\autocite{Jakarta}\\
+~\autocite{quarkusgRPC}\\
+~\autocite{Gradle}\\
+
+\section{Enkelvoudige requests}
+
+Er wordt aangevangen door via REST en gRPC requests te versturen voor datasets van variërende grootte. Bij REST wordt alles steeds in zijn geheel verzonden,
+voor gRPC worden er echter 2 methods voorzien, één waarbij de lijst in zijn geheel wordt verzonden en een tweede waarbij dit als stream gebeurd.
+Deze requests zullen verzonden worden met de applicatie Postman. Deze applicatie laat toe REST en gRPC api's aan te spreken en geeft informatie over het verloop van de request.
+
+~\autocite{Postman}\\
+
+\section{Meervoudige requests}
+
+In deze volgende onderzoeksfase wordt er meer rekening gehouden met eventuele praktische beperkingen waarmee applicatie kunnen en zullen geconfronteerd worden.
+Zo zal het beschikbare geheugen van een applicatie alsook het aantal simultane requests die mogelijks zullen ontvangen worden het noodzakelijk maken om
+de toegelaten reponse grootte te beperken. Voor REST wordt er in dergelijke gevallen vaak voor het pagineren van datasets geopteerd.
+Hierbij is de verstuurde dataset slechts een deel van het geheel. De client geeft bij een gepagineerde request aan hoe groot de subset moet zijn
+en het hoeveelste deel deze subset is van de gehele dataset. De server geeft de gevraagde subset aangevuld door de subset grootte, de positie t.o.v. de gehele set
+en tot slot ook de grootte van de gehele lijst. Praktisch wordt hiervoor het REST endpoint simpelweg meerdere keren na elkaar aangeroepen.
+Bij het gRPC api wordt weer gebruik gemaakt van beide bovenvermelde methods. De dataset wordt, zoals bij REST, in delen verzonden en tevens in zijn geheel als stream verzonden.
+Voor deze face word een client applicatie gebruikt voor de verschillende iteraties uit te voeren. De tijdregistratie gebeurd door middel van Quarkus Micrometer Metrics.
+
+~\autocite{quarkusMicrometer}\\
+
+\section{Requests voorafgegaan en/of gevolgd door andere processen}
+
+In deze derde en laatste onderzoeksfase worden verschillende scenario's vergeleken waarbij andere processen dan de communicatie tussen server en client
+ook een rol spelen. \newline
+Het eerste scenario voorziet dat de dataset, serverside, ditmaal niet in het geheugen beschikbaar is, maar eerst uit een mongo~\parencite{MongoDB} database collectie moet worden opgehaald.
+Voor REST zijn niet gepagineerde requests en gepagineerde requests voor grote datasets voorzien. Bij het gRPC api worden ook weer beide methods gebruikt maar bij de stream versie
+wordt de stream vanuit mongo rechtstreeks doorgegeven. \newline
+Voor het tweede scenario wordt de dataset uit het geheugen verzonden, maar wordt aan de zijde van de client de response gedeserialiseerd en weggeschreven naar een bestand.
+Tot slot worden beide voorgaande processen samengevoegd en zal de dataset in de server uit de mongo gehaald worden en dan, clientside, naar een bestand worden weggeschreven.
+
+Voor de performantie van REST te vergelijken met gRPC zal er een java applicatie gemaakt worden die een REST en een gRPC api aanbiedt.
+In casu zullen beide api's aangeroepen kunnen worden om een lijst personen op te vragen waarbij het aantal personen door de client aangegeven dient te worden.
+De datasets zullen voor beide api's, en voor hetzelfde opgevraagde aantal, gelijk zijn. Deze server applicatie wordt opgezet met behulp van het Quarkus framework
+waarna ze op OpenShift van Red Hat zal gedeployed worden. Quarkus maakt standaard gebruik van RESTEasy reactive
+Bei
+
+REST lijkt sneller dan gRPC wanneer er 1 (grote) hoeveelheid data wordt verzonden.
+Dit is de ideale wereld. Wanneer er beperkingen zijn van resources zoals memory van de applicatie en multiple calls kan het zijn dat die response
+grootte dient beperkt te worden. Bij gRPC gaat het mogelijk zijn om de hele response via eenzelfde stream door te geven terwijl REST meerdere calls zal nodig hebben (to test!).
 
