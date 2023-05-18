@@ -3,70 +3,189 @@
 \section{Introductie}%
 \label{sec:introductie}
 
-Waarover zal je bachelorproef gaan? Introduceer het thema en zorg dat volgende zaken zeker duidelijk aanwezig zijn:
+In dit onderzoek wordt een Representational state transfer, ``REST'', API vergeleken met een Remote Procedure Call, ``RPC'' API, meer specifiek de
+implementatie van Google nl. ``gRPC''. API staat voor Application programming interfaces en is een software-interface die het mogelijk maakt voor twee
+applicaties om met elkaar te communiceren. Ze faciliteren de overdracht van gegevens tussen systemen. Het doel van dit onderzoek is het performantie verschil
+te beschouwen bij het versturen van datasets van variërende grootte tussen 2 opgestarte applicaties. De bevindingen van dit onderzoek dienen ontwikkelaars
+extra middelen aan te reiken om, in vergelijkbare scenario's, beter onderbouwd een keuze te maken tussen beide technologieën .\\
 
-\begin{itemize}
-  \item kaderen thema
-  \item de doelgroep
-  \item de probleemstelling en (centrale) onderzoeksvraag
-  \item de onderzoeksdoelstelling
-\end{itemize}
+In de daaropvolgende literatuurstudie zal eerst meer duidelijkheid worden geschapen over wat een API juist is. De precieze werking van REST alsook van gRPC
+moet dan van naderbij bekeken worden. Dit met de nodige aandacht voor eventuele bijkomende factoren die de performantie kunnen beïnvloeden.
+Tot slot worden beide technologieën ook met elkaar vergeleken.\\
 
-Denk er aan: een typische bachelorproef is \textit{toegepast onderzoek}, wat betekent dat je start vanuit een concrete probleemsituatie in bedrijfscontext, een \textbf{casus}. Het is belangrijk om je onderwerp goed af te bakenen: je gaat voor die \textit{ene specifieke probleemsituatie} op zoek naar een goede oplossing, op basis van de huidige kennis in het vakgebied.
+Aan de hand van de vergelijkende studie wordt de methodologie uitgelegd en de daarbij gemaakte keuzes onderbouwd. Deze hebben o.m. betrekking op de 2
+communicerende applicaties, het datatype dat wordt verzonden en welke grootte van datasets beschouwd zullen worden.\\
 
-De doelgroep moet ook concreet en duidelijk zijn, dus geen algemene of vaag gedefinieerde groepen zoals \emph{bedrijven}, \emph{developers}, \emph{Vlamingen}, enz. Je richt je in elk geval op it-professionals, een bachelorproef is geen populariserende tekst. Eén specifiek bedrijf (die te maken hebben met een concrete probleemsituatie) is dus beter dan \emph{bedrijven} in het algemeen.
-
-Formuleer duidelijk de onderzoeksvraag! De begeleiders lezen nog steeds te veel voorstellen waarin we geen onderzoeksvraag terugvinden.
-
-Schrijf ook iets over de doelstelling. Wat zie je als het concrete eindresultaat van je onderzoek, naast de uitgeschreven scriptie? Is het een proof-of-concept, een rapport met aanbevelingen, \ldots Met welk eindresultaat kan je je bachelorproef als een succes beschouwen?
+Het voorbereidende werk in de literatuurstudie heeft reeds tot aannemingen geleid m.b.t. de gestelde onderzoeksvraag. Deze zijn tot slot in verwachte conclusies uitgeschreven.
+Indien daarbij blijkt dat één van beide technologieën performanter is over de hele lijn kan het resultaat van dit onderzoek de middelen aanreiken om beter geïnformeerd een keuze te maken.
 
 %---------- Stand van zaken ---------------------------------------------------
 
 \section{State-of-the-art}%
 \label{sec:state-of-the-art}
 
-Hier beschrijf je de \emph{state-of-the-art} rondom je gekozen onderzoeksdomein, d.w.z.\ een inleidende, doorlopende tekst over het onderzoeksdomein van je bachelorproef. Je steunt daarbij heel sterk op de professionele \emph{vakliteratuur}, en niet zozeer op populariserende teksten voor een breed publiek. Wat is de huidige stand van zaken in dit domein, en wat zijn nog eventuele open vragen (die misschien de aanleiding waren tot je onderzoeksvraag!)?
+\subsection{API}
 
-Je mag de titel van deze sectie ook aanpassen (literatuurstudie, stand van zaken, enz.). Zijn er al gelijkaardige onderzoeken gevoerd? Wat concluderen ze? Wat is het verschil met jouw onderzoek?
+Een application programming interface, vaker API genoemd, is een connectie tussen computers of applicaties.
+Een API-specificatie verwijst dan weer naar een standaard die beschrijft hoe een dergelijke interface of connectie moet werken.
+Van een applicatie die deze standaard volgt, wordt gezegd dat ze een API blootstelt. API kan verwijzen naar de standaard zelf of naar de applicatie die deze implementeert.
+Zeer vaak wordt, wanneer naar een API wordt verwezen, een web API bedoeld. Een web API bewerkstelligt de communicatie, die via het internet verloopt, tussen applicaties.\\
 
-Verwijs bij elke introductie van een term of bewering over het domein naar de vakliteratuur, bijvoorbeeld~\autocite{Hykes2013}! Denk zeker goed na welke werken je refereert en waarom.
+REST en RPC zijn beiden API's en meer specifiek web API's in die zin dat ze specificaties zijn die aangeven hoe een connectie tussen twee systemen kan geïmplementeerd worden.
+gRPC daarentegen is een implementatie van Google van de RPC specificatie.\\
 
-Draag zorg voor correcte literatuurverwijzingen! Een bronvermelding hoort thuis \emph{binnen} de zin waar je je op die bron baseert, dus niet er buiten! Maak meteen een verwijzing als je gebruik maakt van een bron. Doe dit dus \emph{niet} aan het einde van een lange paragraaf. Baseer nooit teveel aansluitende tekst op eenzelfde bron.
+API's worden ontzettend veel gebruikt waardoor ze ook zeer belangrijk zijn. Elke website, elke browser, maar ook nagenoeg elk apparaat dat met internet verbonden is,
+de zogenaamde smart devices, maakt er gebruik van. De evolutie in de technologische ontwikkeling is van die aard dat er steeds meer apparaten verbonden zijn met elkaar
+en dat deze apparaten ook steeds vaker, en tevens grotere, datasets versturen. Aan de hand van de API's zijn consumenten in staat deze apparaten aan te sturen en te monitoren
+en daarnaast zorgen ze voor een massa aan data die direct bruikbaar is of het potentieel heeft om bruikbaar te worden. Data die, vanuit het standpunt van de producenten, niet mag verloren gaan.\\
 
-Als je informatie over bronnen verzamelt in JabRef, zorg er dan voor dat alle nodige info aanwezig is om de bron terug te vinden (zoals uitvoerig besproken in de lessen Research Methods).
+Het wijdverspreide gebruik van API's, de constante toename van dat gebruik, en zeker ook de toename van de grootte van de data die wordt verzonden, toont
+direct aan dat performantie een zeer belangrijk punt is. Elke software-ontwikkelaar of -architect dient hier rekening mee te houden, en moet het ontwerp van de
+applicatie alsook de keuze voor bepaalde technologieën afstemmen op de noden van de applicatie en haar gebruikers.
+~\autocite{cleo}
 
-% Voor literatuurverwijzingen zijn er twee belangrijke commando's:
-% \autocite{KEY} => (Auteur, jaartal) Gebruik dit als de naam van de auteur
-%   geen onderdeel is van de zin.
-% \textcite{KEY} => Auteur (jaartal)  Gebruik dit als de auteursnaam wel een
-%   functie heeft in de zin (bv. ``Uit onderzoek door Doll & Hill (1954) bleek
-%   ...'')
+\subsection{REST}
 
-Je mag deze sectie nog verder onderverdelen in subsecties als dit de structuur van de tekst kan verduidelijken.
+Representational State Transfer, vaker benoemd door middel van het acronym REST, is een type van web API. Deze technologie wordt zeer vaak gebruikt om webservices te bouwen.
+Dit zijn applicaties die diensten of data als web resources aanbieden. Door middel van een REST API kan de client om deze resources vragen zonder verder
+begrip van de interne werking van de provider. De server reageert dan door een response te versturen met een status code en met de resource in JSON (JavaScript object Notation),
+XML (Extensible Markup Language) of andere tekstindelingen. Een web resource is eigenlijk alles waarmee een client op het web kan communiceren.
+Het kan betrekking hebben op een bestand, afbeelding, HTML of video. Een resource kan ook een service zijn zoals Google Maps of een financiële dienst.
+De API-ontwikkelaars moeten de beslissing maken welke resources ze ondersteunen voor de response. De API moet de mogelijkheid hebben om de response op te maken op basis van de behoefte van de client.
+~\autocite{uptrends}
+~\autocite{guru99-webservices}\\
+
+Opdat een API als RESTfull kan worden beschouwd moet het aan enkele kenmerken voldoen.\\
+Ten eerste dient het, voor de communicatie, gebruik te maken van het HTTP 1.1 protocol. Het protocol, dat zich in de applicatie laag situeert,
+bepaalt dat de client een request, met tekst als vorm, verstuurt naar de server waarop die de gevraagde gegevens terugzendt.
+HTTP specificeert verschillende soorten requests methods waaronder GET, POST, PUT en DELETE. Een REST API kan van al deze methods gebruik maken en zal dat
+hoogstwaarschijnlijk ook doen. HTTP 1.1 houdt een TCP-connectie open tot er uitdrukkelijk opdracht gegeven wordt om deze te sluiten.
+Dit geeft een enorme performantie winst t.o.v. HTTP 1.0. Het nadeel van deze uitdrukkelijke opdracht is dat een wachtende request alle achterliggende requests kan blokkeren.
+Extra TCP-connecties kunnen hier een oplossing bieden, deze zijn echter ook gelimiteerd.
+~\autocite{w3Protocol}\\
+Als tweede kenmerk moet een REST API stateless zijn. Dit houdt in dat er geen informatie zal worden opgeslagen tussen requests door.
+De API zal de verbinding tussen server en client verbreken nadat de server een resource in de vorm van een response heeft doorgezonden aan de client.
+De API behandelt zo elke request los van een eventuele vorige request. Dit vermindert de hoeveelheid geheugen die een server nodig heeft en verhoogt de
+kans op een succesvoller antwoord omdat de server geen extra stappen moet nemen om oude data op te zoeken.\\
+Het derde kenmerk voorziet erin dat de verstuurde data cacheable moet zijn. De client weet namelijk a.d.h.v het type van rest request,
+meer specifiek de request method, dat hij verzonden heeft wat voor antwoord hij kan verwachten.\\
+De vierde eigenschap bestaat uit de verplichting een uniforme interface tussen componenten te voorzien zodat data kan verzonden worden in een standaard vorm.\\
+Het vijfde kenmerk specificeert dat het niet noodzakelijk mag zijn dat de client kennis heeft van de verdere werking van de server(s) buiten de vorm van de communicatie zelf.\\
+Tot slot laat het zesde, en enige optionele, kenmerk toe om executeerbare code te verzenden indien zo verzocht wordt door de client.
+~\autocite{redhat}\\
+
+REST API's zijn zeer flexibel. Ze kunnen veel requests van verschillende types aan alsook kunnen ze data versturen in veel verschillende formaten.
+Webapplicaties groeien aangezien er telkens meer resources worden toegevoegd. Een REST API zal deze toenemende hoeveelheid van variërende requests snel kunnen behandelen.\\
+
+Een REST API spitst zich steeds toe op het domein dat het als resource zal aanbieden.
+Dankzij deze focus alsook de uniforme manier van werken is het voor de client zeer duidelijk welke functionaliteiten hij kan aanroepen en hoe dat te doen.
+~\autocite{jscrambler}
+~\autocite{hubspot}
+~\autocite{HTTP1.1vsHTTP2}\\
+
+\subsection{gRPC}
+
+Een Remote Procedure Call, ``RPC'', API houdt niet meer in dan dat een client, op afstand, een functie van de server kan aanroepen.
+RPC maakte in het verleden, net zoals REST, gebruik van het HTTP-protocol. De XML-RPC alsook de JSON-RPC implementaties zijn hier voorbeelden van.
+Zij maken gebruik van de HTTP request methods GET en POST. De eerste voor het ophalen van data en de tweede voor alle andere functies.\\
+
+De functies van een RPC API kunnen zeer specifiek gericht zijn op de functionaliteit die ze implementeren en daarmee potentieel ook zeer lichtgewicht zijn.
+De client moet enkel de naam van de functie specificiëren en de vereiste data meegegeven. De response zal ook enkel de data bevatten die door de server nodig wordt geacht.
+Wanneer de functies zodanig toegespitst zijn op een functionaliteit wordt er aan de consumer inzicht gegeven over de interne werking van de server,
+alsook dient de client vaak kennis te hebben over die interne werking om de functies te kunnen gebruiken.
+~\autocite{altexsoft}\\
+
+gRPC of Google Remote Procedure Calls is de Google implementatie van het RPC API.\\
+Een eerste groot verschil tussen RPC en de implementatie van Google is dat gRPC gebruik maakt van het HTTP2-transportprotocol.
+HTTP2 werd in 2015 uitgebracht. De doelstellingen bij het ontwikkelen van deze nieuwe versie van het protocol waren vooral toegespitst op performantie.
+Hiebij werden enkele nieuwe functies en kenmerken ontwikkeld. Request multiplexing laat toe om requests simultaan te laten gebeuren.
+Dankzij Request prioritization kan een prioriteit gegeven worden aan requests. Requests en responses worden nu automatisch gecomprimeerd i.t.t. op
+uitdrukkelijk verzoek. De mogelijkheid om de verbinding te resetten werd toegevoegd. Daarenboven kan de server ook proactief resources verzenden naar de
+cache van clients via de zgn. server push functie. En tot slot is HTTP 2 een binair protocol t.o.v. het op gewone tekst gebaseerde HTTP 1.1 protocol.
+~\autocite{baeldung}\\
+
+Het tweede opmerkelijke verschil is dat gRPC geen JSON of XML gebruikt, maar protocol buffers, ook protobuf genoemd. Protobuf is gelijkaardig aan JSON,
+maar werkt met gestructureerde serializeerbare en deserializeerbare data om binair te communiceren. Het is zodanig geformatteerd dat het niet leesbaar is
+door het menselijk oog. Protobuf verkleint de berichten waardoor de snelheid van de data transacties veel hoger kan liggen. gRPC heeft een ingebouwde
+protoc-compiler voor het genereren van API-aanroepen en kan zo makkelijk inspelen op vele programmeertalen.
+Desondanks deze compiler is een implementatie vaak nog tijdrovender dan alternatieve API's.
+~\autocite{dreamfactory}\\
+
+gRPC wordt steeds populairder dankzij de opkomst van microservices. Dit zijn services die onafhankelijk van elkaar worden gebouwd en geïmplementeerd om
+zo tot een gehele toepassing te komen. Bij een fout in één van de services zal dit niet de hele app gaan verstoren.
+Om goed met elkaar te kunnen communiceren zijn er dus goed gedefineerde API-contracten nodig.
+~\autocite{microsoft}\\
+
+Dankzij de eerder vermelde multiplexing kunnen meerdere dingen tegelijk gebeuren, meerdere requests tegelijk worden verzonden, bij één enkele connectie.
+Wat hier zeker opvalt is bidirectioneel streamen. Zowel de client als de server sturen berichten naar elkaar op hetzelfde moment zonder te moeten wachten
+op een antwoord. Een client kan zelfs een request annuleren als er geen response meer nodig is van de server.
+~\autocite{freecodecamp}\\
+
+\subsection{REST vs gRPC}
+
+Bij het overlopen van de kenmerken van REST en gRPC komen direct enkele belangrijke verschillen naar boven.
+Het feit dat REST werkt met het HTTP 1.1 en gRPC met het HTTP 2 protocol heeft ingrijpende gevolgen. HTTP 2 heeft alle mogelijkheden van het 1.1 protocol,
+maar voegt daar de hierboven reeds opgesomde functionaliteiten aan toe (Request multiplexing, Request prioritization, Automatic compressing,
+Server push en haar binaire vorm). Deze bijkomende functionaliteiten zijn voornamelijk toegespitst op een verbetering van de performantie en efficiëntie van dataoverdracht.
+~\autocite{cloudflare}
+~\autocite{tutsplus}\\
+
+Een tweede belangrijk verschil is zichtbaar bij de protocol buffers van gRPC versus het gewone tekst formaat dat gebruikt wordt bij REST-API's.
+Dit verschil bouwt duidelijk ook verder op het voorgaande punt m.b.t. het HTTP 1.1 en HTTP 2 protocol.
+Bij deze protocol buffers wordt de datastructuur éénmaal vastgelegd en gaat de gegenereerde code van gRPC de serialisatie en deserialisatie van de data verzorgen.
+Dit serialisatieproces zorgt dat data zeer compact gemaakt wordt alvorens ze wordt verzonden. ~\autocite{googleprotobufguide}\\
+
+Daar staat wel tegenover dat de data, zoals vermeld, steeds vooraf gedefinieerd dient te worden.
+Het verzenden van dynamische data maakt het voordeel dat bereikt wordt tijdens de serialisatie namelijk ongedaan.\\
+
+REST heeft een grotere simpliciteit dan gRPC. Er is bij REST enkel een http-compatible client nodig om een applicatie te ontwikkelen terwijl
+er bij gRPC steeds protobuf nodig is voor het deserialisatieproces.\\
+
+gRPC is veel minder wijdverspreid dan REST. Dit geeft veel voordelen voor REST, gaande van gekende best practices, oplossingen voor allerhande problemen
+tot simpelweg ontwikkelaars met ervaring vinden. Kijk maar naar het aantal vragen op stackoverflow voor REST, op vandaag 89111 ~\parencite{stackrest},
+versus die voor gRPC, op heden 5162 ~\parencite{stackgrpc}.\\
+
+Dankzij het feit dat REST de server en client volledig van elkaar scheidt, is het zeer gemakkelijk aanpasbaar zonder dat de backwards compatibility in
+gevaar wordt gebracht. Tevens maakt dit een REST API uitermate schaalbaar.
+~\autocite{protobuf}
 
 %---------- Methodologie ------------------------------------------------------
 \section{Methodologie}%
 \label{sec:methodologie}
 
-Hier beschrijf je hoe je van plan bent het onderzoek te voeren. Welke onderzoekstechniek ga je toepassen om elk van je onderzoeksvragen te beantwoorden? Gebruik je hiervoor literatuurstudie, interviews met belanghebbenden (bv.~voor requirements-analyse), experimenten, simulaties, vergelijkende studie, risico-analyse, PoC, \ldots?
+De literatuurstudie doet uitschijnen dat gRPC, dankzij haar gebruik van het HTTP 2 protocol, performanter gaat zijn dan REST, welk gebruikmaakt van het HTTP 1.1 protocol.
+Er kan pas zekerheid zijn hierover wanneer de REST-implementatie zodanig is uitgewerkt dat deze zich ten volle toespitst op performantie.
+Daarentegen zou deze implementatie wel zeer ver weg zijn van het gewone gebruik van deze API-specificatie.
+Om deze reden lijkt het interessant een REST API aan het onderzoek toe te voegen dat zich toelegt op de performantie en
+een andere implementatie die het normale gebruik weerspiegelt.\\
 
-Valt je onderwerp onder één van de typische soorten bachelorproeven die besproken zijn in de lessen Research Methods (bv.\ vergelijkende studie of risico-analyse)? Zorg er dan ook voor dat we duidelijk de verschillende stappen terug vinden die we verwachten in dit soort onderzoek!
+Langs de serverkant worden er 2 implementaties gemaakt van een REST API en één van gRPC. Hetzelfde gebeurt voor de client.\\
+De eerste REST provider implementatie is een normale REST API die resources serialiseert naar en verstuurt in JSON formaat
+(XML wordt buiten beschouwing gelaten gezien die meer overhead creëert). Hiertegenover staat een REST-API-client die het API zal consumeren en deserialiseren.\\
+De tweede REST provider implementatie is een REST API die zich toespitst op performantie.
+Deze zal de resources serialiseren naar een zo klein mogelijk dataformaat alvorens ze te versturen.
+Als formaat wordt geopteerd voor csv (comma separated values) in gewone tekst. Hiertegenover staat een REST-API-client die het API zal consumeren en deserialiseren.\\
+De laatste provider en consumer implementeren gRPC. Ze maken gebruik van de ingebouwde protocol buffer functionaliteit en
+een .proto bestand voor het serialisatieproces welke door beiden gedeeld worden.\\
 
-Vermijd onderzoekstechnieken die geen objectieve, meetbare resultaten kunnen opleveren. Enquêtes, bijvoorbeeld, zijn voor een bachelorproef informatica meestal \textbf{niet geschikt}. De antwoorden zijn eerder meningen dan feiten en in de praktijk blijkt het ook bijzonder moeilijk om voldoende respondenten te vinden. Studenten die een enquête willen voeren, hebben meestal ook geen goede definitie van de populatie, waardoor ook niet kan aangetoond worden dat eventuele resultaten representatief zijn.
+Alle implementaties worden uitgewerkt in 2 Java applicaties, één voor de clients en één voor de providers.
+De REST implementaties maken gebruik van de ingebouwde REST functionaliteit van Java zelf.
+De gRPC implementatie daarentegen gebruikt uiteraard gRPC. Deze applicaties worden gehost op dezelfde AWS-cloud server.\\
 
-Uit dit onderdeel moet duidelijk naar voor komen dat je bachelorproef ook technisch voldoen\-de diepgang zal bevatten. Het zou niet kloppen als een bachelorproef informatica ook door bv.\ een student marketing zou kunnen uitgevoerd worden.
-
-Je beschrijft ook al welke tools (hardware, software, diensten, \ldots) je denkt hiervoor te gebruiken of te ontwikkelen.
-
-Probeer ook een tijdschatting te maken. Hoe lang zal je met elke fase van je onderzoek bezig zijn en wat zijn de concrete \emph{deliverables} in elke fase?
+Voor het onderzoek worden datasets gebruikt van verschillende dataformaat doch dezelfde repetitieve data.
+Deze worden hard gecodeerd toegevoegd aan de provider applicatie. Ze zijn van variërende grootte gaande van 1Kb tot 10Mb met intervallen van 102,4Kb.
+Zo worden er per implementatie 100 datasets verzonden. ~\parencite{aws}\\
+De tijdsregistratie start zodra de client de GET request verstuurt tot wanneer de client de ontvangen dataset gedeserialiseerd heeft.
+Deze registratie gebeurt d.m.v. de JMH, Java Microbenchmark Harness, library. De provider alsook de client applicatie zijn reeds opgestart wanneer de request verzonden wordt.
 
 %---------- Verwachte resultaten ----------------------------------------------
 \section{Verwacht resultaat, conclusie}%
 \label{sec:verwachte_resultaten}
 
-Hier beschrijf je welke resultaten je verwacht. Als je metingen en simulaties uitvoert, kan je hier al mock-ups maken van de grafieken samen met de verwachte conclusies. Benoem zeker al je assen en de onderdelen van de grafiek die je gaat gebruiken. Dit zorgt ervoor dat je concreet weet welk soort data je moet verzamelen en hoe je die moet meten.
-
-Wat heeft de doelgroep van je onderzoek aan het resultaat? Op welke manier zorgt jouw bachelorproef voor een meerwaarde?
-
-Hier beschrijf je wat je verwacht uit je onderzoek, met de motivatie waarom. Het is \textbf{niet} erg indien uit je onderzoek andere resultaten en conclusies vloeien dan dat je hier beschrijft: het is dan juist interessant om te onderzoeken waarom jouw hypothesen niet overeenkomen met de resultaten.
+Uit de literatuurstudie zou afgeleid kunnen worden dat gRPC over de hele lijn sneller zal zijn dan REST. Zelfs indien de REST API zo performant mogelijk
+gemaakt wordt, wat tegen het gebruik ervan ingaat. Het performantie verschil voor datasets met een klein formaat zal waarschijnlijk wel een
+beduidend minder grote impact hebben. Voor applicaties die grote datasets, of zeer frequent data, dienen te versturen kan het performantie verschil echter
+een doorslaggevende factor betekenen. Ondanks het duidelijke resultaat zal dit onderzoek ontwikkelaars en applicatie-architecten toch middelen bieden om
+beter geïnformeerd een keuze te maken tussen een REST-API-implementatie of gRPC. Hierbij zullen zij, afhankelijk van de noden van de te ontwikkelen applicatie
+niet alleen rekening houden met de hier onderzochte performantie maar ook met de andere voor- en nadelen van beide API's.
 
