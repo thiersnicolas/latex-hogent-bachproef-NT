@@ -1,6 +1,8 @@
 \chapter{\IfLanguageName{dutch}{Stand van zaken}{State of the art}}%
 \label{ch:stand-van-zaken}
 
+\nocite{Paper}
+
 % Tip: Begin elk hoofdstuk met een paragraaf inleiding die beschrijft hoe
 % dit hoofdstuk past binnen het geheel van de bachelorproef. Geef in het
 % bijzonder aan wat de link is met het vorige en volgende hoofdstuk.
@@ -24,9 +26,6 @@ Een API-specificatie verwijst dan weer naar een standaard die beschrijft hoe een
 Van een applicatie die deze standaard volgt, wordt gezegd dat ze een API blootstelt. API kan verwijzen naar de standaard zelf of naar de applicatie die deze implementeert.
 Zeer vaak wordt, wanneer naar een API wordt verwezen, een web API bedoeld. Een web API bewerkstelligt de communicatie, die via het internet verloopt, tussen applicaties.\\
 
-REST en RPC zijn beiden API's en meer specifiek web API's in die zin dat ze specificaties zijn die aangeven hoe een connectie tussen twee systemen kan geïmplementeerd worden.
-gRPC daarentegen is een implementatie van Google van de RPC specificatie.\\
-
 API's worden ontzettend veel gebruikt waardoor ze ook zeer belangrijk zijn. Elke website, elke browser, maar ook nagenoeg elk apparaat dat met internet verbonden is,
 de zogenaamde smart devices, maakt er gebruik van. De evolutie in de technologische ontwikkeling is van die aard dat er steeds meer apparaten verbonden zijn met elkaar
 en dat deze apparaten ook steeds vaker, en tevens grotere, datasets versturen. Aan de hand van de API's zijn consumenten in staat deze apparaten aan te sturen en te monitoren
@@ -36,6 +35,64 @@ Het wijdverspreide gebruik van API's, de constante toename van dat gebruik, en z
 direct aan dat performantie een zeer belangrijk punt is. Elke software-ontwikkelaar of -architect dient hier rekening mee te houden, en moet het ontwerp van de
 applicatie alsook de keuze voor bepaalde technologieën afstemmen op de noden van de applicatie en haar gebruikers.
 ~\autocite{cleo}
+
+REST en RPC zijn beiden API's en meer specifiek web API's in die zin dat ze specificaties zijn die aangeven hoe een connectie tussen twee systemen kan geïmplementeerd worden.
+gRPC daarentegen is een implementatie van Google van de RPC specificatie.\\
+
+Buiten REST en gRPC zijn er nog verschillende vari\"eteiten van web API's welke niet verder aan bod zullen komen in deze scriptie, maar die toch interesssant zijn om
+te vermelden en kort te vergelijken met de twee welke het onderwerp zijn van dit onderzoek.
+
+~\paragraph{SOAP}
+Simple Objects Access Protocol ofwel kort SOAP is een web communicatie protocol ontwikkeld voor Microsoft in 1998. Het wordt op vandaag het meeste gebruikt om
+web services aan te bieden data via HTTP of HTTPS(HTTP over TLS of SSL) maar kan ook gebruikt worden bij b.v. FTP en SMTP.
+Bij SOAP wordt data, in XML formaat, steeds via een standaard XML schema (XSL) ge\"encodeerd. Zo worden berichten, requests en responses, als volgt gestructureerd:
+Een \<soap:Envelope\> is het hoofdelement en kan drie sub elementen bevatten nl. \<soap:Header\>, \<soap:Body\> en \<soap:Fault\>. De Header is optionaal maar moet
+als eerste voorkomen binnen de Envelope. Dit element geeft eventuele extra informatie m.b.t. het bericht en kan b.v. de authenticatie gegevens bevatten. Het Body element
+is noodzakelijk en bevat de effectieve data van het bericht, tevens in XML formaat. Het niet verplichte Fault element bevate, ten slotte, gegevens over eventuele errors.\newline
+SOAP zelf legt standaard enkel deze basis structuur op. Wat er verder in de Header of Body elementen wordt geplaats wordt niet bepaald. SOAP werd, door deze lacune, na haar
+uitgave uitgebreid met een veelvoud van protocollen die in meer detail de werking specifi\"eren. Deze gaan over verschillende onderwerpen zoals beveiliging, transactiebeheer,
+metadata,\ldots. WS-Atomic Transaction is een voorbeeld waarmee aan de ACID (Atomair, Consisitent, Ge\"{\i}soleerd en Duurzaam) regels kan voldaan worden.
+Met behulp van Web Service Description Language of kort WSDL kan, in XML formaat, een schema gedefinieerd worden welke dienen als richtlijn om met een web service te
+communiceren. Aan de hand van dit schema kan code bij de client gegenereerd worden. SOAP staat zowel stateful als stateless communicatie toe, waar de server respectievelijk
+informatie over de client gaat bijhouden of juist niet.\newline
+Enkele nadelen van SOAP zijn de grotere bestandsgrootte van XML waar men bij SOAP niet rond kan, het feit dat het gebaseerd is op een groot aantal protocollen waarbij
+de verschillende nodige protocollen begrijpen voor een stevige leercurve kan zorgen en tot slot het strikte contract tussen server en client weinig flexibiliteit geeft
+waardoor een aanpassing een vervelend en omvangrijk proces kan worden.\newline
+~\autocite{soap}\\
+~\autocite{redhatapissoaprestgraphqlgrpc}\\
+
+~\paragraph{GraphQL}
+GraphQL is een technologie die eerst werd ontwikkeld door Facebook maar werd intussen open-source gemaakt. Bij GraphQL wordt de communicatie gestart doordat de
+client een HTTP POST request verstuurd naar de server. In de body van die request zit een GraphQL query of mutation die aangeeft welke data respectievelijk wordt
+opgevraagd of gewijzigd. De inhoud van deze quary moet in eerste instantie voldoen aan specificaties van GraphQL zelf, maar daarnaast ook aan het schema dat gedefinieerd
+wordt door de server. In de sever applicatie wordt een GraphQL schema opgesteld waarin de beschikbare objecten, in de vorm van types, omschreven worden. De mogelijke
+queries en mutations worden ook hier opgelijst. Door de data in dit GraphQL formaat weer te geven is de representatie ervan, zoals de naam al zegt, in een graph.
+De types zijn nodes die via edges, al dan niet bidirectioneel, aan elkaar verbonden zijn. GraphQL is zeer flexibel naar de client toe om te bepalen welke data deze opvraagd.
+De client kan starten vanop een gedefinieer query of mutation entrypoint en zo aangeven welke data hij effectief wenst terug te krijgen, tot gerelateerde nodes toe.
+Hij kan, indien dit via het schema beschikbaar werd gemaakt, eventueel zelfs bepaalde input meegeven voor geconnecteerde nodes aan te spreken. Vooral voor frontend ontwikkelaars
+biedt dit een groot voordeel daar zij specifiek enkel de data kunnen opvragen die ze op het scherm zullen weergeven, niet meer, niet minder, en waarschijnlijk slechts met één oproep.
+Naast queries en mutations, welke beiden een synchroon verloop kennen, biedt GraphQL nog een derde mogelijkheid aan nl. subscriptions, dat asynchroon werkt.
+Via een subscription kan een client zich inschrijven om bepaalde berichten vanuit de server te ontvangen. Zo kan de server de client bijvoorbeeld een bericht sturen als
+een bepaalde gebeurtenis zich heeft voorgedaan. Subscriptions werken aan de hand van WebSockets en dus niet meer via het HTTP protocol. Het implementeren van subscriptions
+kan blijkbaar wel wat meer moeilijkheden met zich meebrengen.
+~\autocite{graphql}
+~\autocite{redhatapissoaprestgraphqlgrpc}
+~\autocite{graphqlfrontend}
+~\autocite{graphqlsubscriptions}
+
+
+Om de twee juist beschreven API's goed te kunnen plaatsen qua gebruik en belang wordt hier wat voorgelopen op de verdere uitleg en alvast een overzicht getoond van de evolutie van de
+stack overflow trends sinds 2008 met betrekking tot de tags SOAP en GraphQL. Later meer over REST vs gRPC. Met betrekking tot SOAP en GraphQL is alvast zeer duidelijk dat SOAP eerder
+aan populariteit aan het inboeten is, eventueel met juist een kleine opleving sinds 2022. GraphQL daarentegen is sinds einde 2015 fors gestegen naar hetzelfde niveau dat SOAP had
+op haar hoogtepunt op deze grafiek nl. in 2008. GraphQL lijkt wel haar stijging sinds 2020 slechts zeer licht verder te zetten.
+zichtbaar
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\linewidth]{stackoverflowSOAPGraphQL}
+    \caption{[Percentage Stack Overflow vragen per maand voor SOAP en GraphQL]Percentage Stack Overflow vragen per maand voor SOAP en GraphQL,\newline
+    https://insights.stackoverflow.com/trends?tags=soap\%2Cgraphql}
+\end{figure}\\
+\nocite{stackoverflowSOAPGraphQL}
 
 \section{REST}
 
@@ -72,7 +129,7 @@ REST API's zijn flexibel. Ze kunnen requests van verschillende types aan alsook 
 Webapplicaties groeien aangezien er telkens meer resources worden toegevoegd. Een REST API zal deze toenemende hoeveelheid van variërende requests snel kunnen behandelen.\\
 
 Een REST API spitst zich steeds toe op het domein dat het als resource zal aanbieden.
-Dankzij deze focus alsook de uniforme manier van werken is het voor de client duidelijk welke functionaliteiten hij kan aanroepen en hoe dat te doen.
+Dankzij deze focus en de uniforme manier van werken is het voor een client duidelijk welke functionaliteiten er kunnen worden aangeroepen en hoe dat te doen.
 ~\autocite{jscrambler}
 ~\autocite{hubspot}
 ~\autocite{HTTP1.1vsHTTP2}\\
@@ -94,6 +151,36 @@ Dit kan door een aparte url per versie, door het versienummer mee te geven in ee
 Deze verschillende versies kunnen in dezelfde applicatie gesupporteerd worden of er worden verschillende versies van de applicatie gedeployed.
 ~\autocite{restversion}\\
 
+Wanneer er via een REST API grote datasets beschikbaar worden gesteld wordt het aanzien als best practice om en soort van paginatie te voorzien. Door paginatie te
+implementeren kan de grote dataset in kleinere delen worden opgevraagd. Hierdoor zal het systeem minder makkelijk overbelast worden doordat één proces lang blijft
+hangen wanneer het een request aan het verwerken is. Wanneer de dataset daarboven wordt gebruikt door een applicatie die een user interface voorziet zal het
+niet wenselijk zijn om een te grote dataset in één keer weer te geven. Dit is immers niet overzichtelijk voor een menselijke gebruiker.
+Deze gebruiker zal ook wensen dat de data in enkele seconden wordt weergegeven. Kleinere datasets zullen ook een positief effect hebben op de laadtijd.
+Het netwerkverkeer van een applicatie wordt dankzij paginatie ook meer gericht gebruikt voor wat effectief nodig is. Het is ook aangewezen dat een REST API een
+default pagina grootte implementeerd voor wanneer deze parameter door de client niet wordt meegegeven. Daarenboven is het beperken van de maximum pagina grootte die
+kan opgevraagd worden ook een goed idee.
+Praktisch komt paginatie bij een REST API er vaak op neer dat de client een pagina nummer en een pagina grootte meegeeft wanneer er een dataset opgevraagd wordt.
+Deze pagina nummer en pagina grootte kan bij een GET request best in de url als query parameters meegegeven worden en bij een POST request eventueel in de request body.
+De server zal dan de dataset die wordt verzonden beperken door de items voor de gevraade pagina over te slaan en alle items na de opgegeven grootte te laten vallen.
+Als bijkomende informatie zal de server de dataset aanvullen met pagina informatie. Hier zal het pagina nummer en de pagina grootte steeds toe behoren maar eventueel
+ook aangevuld met het totaal aantal items en het totaal aantal pagina's van die grootte.
+Stel dat via een REST API een lijst van boeken kan opgevraagd worden via een GET endpoint met page en pageSize query parameters. De request voor de eerste pagina
+van 3 boeken zou er dan bijvoorbeeld zo kunnen uitzien:\newline
+https://www.hogent.be/boeken?page=0\&pageSize=3
+Het antwoord van de server, in JSON formaat, zou dan als volgt kunnen zijn:\newline
+    \{
+        ''page'': 0,
+        ''pageSize'': 3,
+        ''totalCount'': 50,
+        ''totalPages'': 17,
+        ''results'': [\ldots]
+    \}\newline
+~\autocite{paging}\\
+~\autocite{wachtenLaadtijd}\\
+
+
+
+
 \section{gRPC}
 
 Een RPC API stelt een client in staat om op afstand een serverfunctie aan te roepen, zonder dat de client zich verder bewust hoeft te zijn van de interne werking
@@ -104,7 +191,7 @@ Zij maken gebruik van de HTTP request methods GET en POST. De eerste voor het op
 De functies van een RPC API kunnen specifiek gericht zijn op de functionaliteit die ze implementeren en daarmee potentieel ook lichtgewicht zijn.
 De client moet enkel de naam van de functie specificiëren en de vereiste data meegegeven. De response zal ook enkel de data bevatten die door de server nodig wordt geacht.
 Wanneer de functies zodanig toegespitst zijn op een functionaliteit wordt er aan de consumer inzicht gegeven over de interne werking van de server,
-alsook dient de client vaak kennis te hebben over die interne werking om de functies te kunnen gebruiken.
+alsook dient de client vaak kennis te hebben over die interne werking om de functies te kunnen gebruiken.\newline
 ~\autocite{altexsoft}\\
 
 Google Remote Procedure Calls (gRPC) is de implementatie van Google van het RPC API.\\
@@ -113,37 +200,150 @@ HTTP2 werd in 2015 uitgebracht. De doelstellingen bij het ontwikkelen van deze n
 Hiebij werden enkele nieuwe functies en kenmerken ontwikkeld. Request multiplexing laat toe om requests simultaan te laten gebeuren.
 Dankzij Request prioritization kan een prioriteit gegeven worden aan requests. Requests en responses worden nu automatisch gecomprimeerd i.t.t. op
 uitdrukkelijk verzoek. De mogelijkheid om de verbinding te resetten werd toegevoegd. Daarenboven kan de server ook proactief resources verzenden naar de
-cache van clients via de zgn. server push functie. En tot slot is HTTP 2 een binair protocol t.o.v. het op gewone tekst gebaseerde HTTP 1.1 protocol.
+cache van clients via de zgn. server push functie. En tot slot is HTTP 2 een binair protocol t.o.v. het op gewone tekst gebaseerde HTTP 1.1 protocol.\newline
 ~\autocite{baeldung}\\
 
-Het verplicht gebruik van HTTP2 komt echter ook met het nadeel dat gRPC hierdoor niet ondersteund wordt door de hedendaagse browsers.
+Het verplicht gebruik van HTTP2 komt echter ook met het nadeel dat gRPC hierdoor niet ondersteund wordt door de hedendaagse browsers. Javascript heeft geen
+volledige controle over HTTP2 waardoor er bepaalde HTTP2 functionaliteit, die nodig is voor gRPC, niet beschikbaar is voor browsers die Javascript gebruiken.
 Voor gRPC moeten er b.v. trailing headers blootgesteld worden welke door browser steeds verborgen worden. Een oplossing hiervoor is het gebruik van een proxy welke
-door middel van een normale HTTP request communiceert met de browser en dan de request via gRPC naar de server doorgeeft.
+door middel van een normale HTTP request communiceert met de browser en dan de request via gRPC naar de server doorgeeft.\newline
 ~\autocite{altexsoftgrpc}\\
 ~\autocite{yukutakahashi}\\
+
+Het HTTP 2 protocol verplicht het gebruik van encryptie, zoals TLS, niet, ondanks hevige discussie in de werkgroep. Het protocol legt wel enige verplichtingen op,
+onder meer met betrekking tot het versienummer, wanneer er toch van encryptie of TLS gebruik wordt gemaakt. TLS staat voor Transport Layer Security en is een protocol
+dat het encrypteren van data die tussen applicaties over het internet verzonden wordt. Door het dataverkeer te encrypteren zijn de verzender en ontvanger zeker dat
+de berichten enkel door hen gelezen kunnen worden alsook dat deze berichten authentiek zijn en van hen afkomstig zijn. TLS wordt voor veel verschillende soorten van internet communicatie gebruikt.
+Ondanks het niet verplichten van encryptie in het HTTP2 protocol wordt TLS in de praktijk toch verplicht wanneer er gebruikt gemaakt wordt van HTTP2.
+Gezien gRPC steeds via het HTTP2 protocol gaat, zal TLS dan eventueel ook moeten voorzien worden bij gRPC APIs. Het gebruik van TLS bij gRPC wordt daarenboven aangeraden.
+HTTP2 wordt door de meeste browsers wel gesupporteerd, maar steeds in combinatie met TLS. Het is niet omdat een browser het HTTP2 protocol aanvaard dat daarmee gRPC reeds
+gesupporteerd wordt.\newline
+TLS heeft een impact op de performantie. Bij TLS moet er een onderhandling gevoerd worden met wat heen en weer communicatie. Bij het HTTP2 protocol ligt dit performantie nadeel,
+dankzij het gebruik van multiplexing, lager dan bij HTTP1.1.
+Een server moet een SSL/TLS certificaat hebben om deze encryptie te kunnen gebruiken. Dit certificaat zal in eerste instantie toelaten om de identiteit van het systeem
+waarmee een connectie tot stand gebracht wordt te achterhalen en daarna helpen de communicatie over de connectie te encrypteren. Er bestaan zelf gesigneerde certificaten
+en CA certificaten gecre\"eerd en gesigneerd door een Certificate Authority. Een self signed certificate wordt normaal alleen geaccepteerd als dit certificaat of de
+partij die het getekend heeft gekend is door de consumerende applicatie en dus bijna exclusief voor intern gebruik. CA certificates kunnen geaccepteerd worden indien de
+CA zelf vertrouwd wordt door de applicatie.\newline
+TLS gaat met deze certificaten symmetrische en assymetrische encryptie toepassen. Via assymmetrische encryptie wordt een beveiligde sessie tussen server en client tot
+stand gebracht waarna de uitgewisselde de data via symmetrische encryptie beveiligd wordt. Het proces verloopt als volgt.
+\begin{itemize}
+    \item De client contacteert de server via HTTPS.
+    \item De server verstuurt zijn certificaat en publieke sleutel.
+    \item De client verifi\"eert het certificaat met een vertrouwde CA of controleerd of het certificaat zelf vertrouwd wordt.
+    \item Client en server onderhandelen over de te gebruiken encryptie.
+    \item De client encrypteerd een sessie sleutel, specifiek voor de sessie, door middel van de publieke sleutel en verstuurd deze naar de server.
+    \item De server gebruik zijn private sleutel om de sessie sleutel de decrypteren en de sessie wordt vastgesteld.
+    \item Client en server gebruiken nu de sessie sleutel om de communicatie de encrypteren en decrypteren.
+\end{itemize}
+~\autocite{githubhttp2}\\
+~\autocite{sslcomhttp2tls}\\
+~\autocite{browserhttp2support}\\
+~\autocite{tlsBasics}\\
+~\autocite{grpctls}\\
+~\autocite{http11vshttp2}\\
+~\autocite{tlsperformance}\\
+~\autocite{sslcertificate}\\
+~\autocite{sslhandshake}
 
 gRPC gebruikt geen JSON, XML, of zelfs enig ander teksformaat, maar protocol buffers, ook protobuf genoemd. Protobuf is zodanig geformatteerd dat het niet leesbaar is
 voor het menselijk oog. Berichten worden verkleint tot een binair formaat waardoor de snelheid van data transacties hoger zou liggen. gRPC heeft een ingebouwde
 protoc-compiler voor het genereren van API-aanroepen en kan zo makkelijk inspelen op vele programmeertalen.
-Ondanks deze compiler is een implementatie vaak nog tijdrovender dan alternatieve API's.
+Ondanks deze compiler is een implementatie vaak nog tijdrovender dan alternatieve API's.\newline
 ~\autocite{googleprotobufguide}\\
 ~\autocite{dreamfactory}\\
 
-gRPC wordt steeds populairder dankzij de opkomst van microservices. Dit zijn services die onafhankelijk van elkaar worden gebouwd en geïmplementeerd om
+De protoc-compiler genereert de nodige code op basis van een .proto bestand. In dat bestand moet de data structuur alsook de methodes
+of functies, die laatsten binnen een Service geplaatst, die het API ter beschikking wilt stellen gedefineerd worden.
+De basis data structuur van gRPC zijn messages. Elke message bevat velden
+die een vooraf gegaan worden door een .proto primitief type, zie tabel ~\ref{tab:Types}, gevolgd door de naam van het veld en ten slotte een nummer
+geassigneerd moeten krijgen. Deze messages dienen zowel voor de request als responses.
+gRPC heeft 4 verschillende soorten methodes die kunnen ge\"{\i}mplementeerd worden:
+\begin{itemize}
+    \item Unary RPCs waarbij de client een enkelvoudige request verstuurd naar de server en ook een enkelvoudige response terugkrijgt.
+    \item Server stream RPCs waarbij de client een enkelvoudige request stuurd naar de server maar de server stuurt een stream terug
+    waarmee een reeks messages ontvangen kunnen worden.
+    \item Client stream RPCs waarbij de client een stream stuurt en de server een enkelvoudige response terug zend.
+    \item Bidirectionele stream RPCs waarbij zowel de client als de server een stream verzenden.
+\end{itemize}
+Op basis van het .proto bestand wordt dan zowel code voor de client als de server gegenereerd. In de server applicatie moeten de methodes die gedeclareerd werden
+in het bestand ge\"{\i}mplementeerd worden. De gRPC infrastructuur zal de binnenkomende requests deserialiseren, correcte methodes aanroepen en tot slot ook
+de server response serialiseren. In de client wordt er een lokaal object gecre\"eerd, vaak stub of client genoemd, dat dezelfde methodes heeft als de Service in
+het .proto bestand. De client applicatie kan dan de methodes van de stub aanroepen en deze zal communicatie met de server applicatie regelen.\newline
+~\autocite{grpcintroduction}\\
+~\autocite{grpccoreconcepts}\\
+
+\begin{table}
+    \centering
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{.proto type} & \textbf{Java Type} & \textbf{C\# Type} \\
+        \midrule
+        double & double & double \\
+        float & float & float \\
+        int32 & int & int \\
+        int64 & long & long \\
+        uint32 & int & uint \\
+        uint64 & long & ulong \\
+        sint32 & int & int \\
+        sint64 & long & long \\
+        fixed32 & int & uint \\
+        fixed64 & long & ulong \\
+        sfixed32 & int & int \\
+        sfixed64 & long & long \\
+        bool & boolean & bool \\
+        string & String & string \\
+        bytes & ByteString & ByteString \\
+        \bottomrule
+    \end{tabular}
+    \caption{[Primitieve .proto types]Primitieve .proto types,\newline
+    https://protobuf.dev/programming-guides/proto3/\#scalar}
+    \label{tab:Types}
+\end{table}
+
+gRPC kan synchroon of asynchroon verlopen. Bij synchrone calls zullen de server of client wachten tot de call afgelopen is of ze van de andere applicatie een antwoord gekregen hebben.
+Asynchrone calls blokkeren in de applicatie die de call verzonden heeft geen threads. Wanneer er een antwoord komt wordt daarvoor een nieuwe thread opgestart.
+De client en server stream RPCs zijn beiden asynchroon. Bij server streaming handelt de client item per item af wanneer deze ontvangen worden en is klaar wanneer alle items ontvangen zijn.
+De server is klaar wanneer alle messages verzonden zijn en de status code met eventuele metadata verzonden wordt.
+Client streaming verloopt gelijkaardig maar de client verzend de stream naar de server.
+Bij bidirectioneel streamen zijn beide streams onafhankelijk van elkaar. Beide applicaties kunnen messages ontvangen en verzenden in elke volgorde.
+Ze kunnen wachten op een antwoord maar ook gewoon alle messages continue blijven streamen.
+gRPC waarborgt steeds dat de orde waarin de messages via een stream verzonden worden bewaard blijft binnen één aangeroepen methode.
+Gezien het mogelijk is om eindeloze streams te verzenden is het belangrijk dat beide applicaties de call kunnen be\"eindigen op eigen houtje.\newline
+~\autocite{grpccoreconcepts}\\
+
+Een vraag die hierbij naar boven rijst is hoe deze .proto bestanden gedeeld worden tussen client en server applicaties.
+Het lijkt erop dat er nog geen algemene best practice over vastgelegd werd. Enkele mogelijke oplossingen
+die naar voor gekomen zijn:
+\begin{itemize}
+    \item In deze blog ~\parencite{protofilesharingSol1} wordt voorgesteld om de gegenereerde code in libraries te verpakken en ter beschikking te stellen van de clients en server applicaties
+    \item In het artikel ~\parencite{protofilesharingSol2} wordt een gRPC contract via een REST endpoint gedeeld.
+    \item In deze git repository ~\parencite{protofilesharingSol3} wordt voorgesteld om door middel van server reflection clients at runtime requests te laten cre\"eren.
+\end{itemize}
+
+gRPC wordt steeds populairder dankzij de opkomst van microservices. Dit zijn services die onafhankelijk van elkaar worden gebouwd en ge\"{\i}mplementeerd om
 zo tot een gehele toepassing te komen. Bij een fout in één van de services zal dit niet de hele app gaan verstoren.
-Om goed met elkaar te kunnen communiceren zijn er dus goed gedefineerde API-contracten nodig.
+Om goed met elkaar te kunnen communiceren zijn er dus goed gedefinieerde API-contracten nodig.\newline
 ~\autocite{microsoft}\\
 
 Dankzij de eerder vermelde multiplexing kunnen meerdere dingen tegelijk gebeuren, meerdere requests tegelijk worden verzonden, bij één enkele connectie.
 Wat hier zeker naar voor treedt is het bidirectioneel streamen. Zowel de client als de server sturen berichten naar elkaar op hetzelfde moment zonder te moeten wachten
-op een antwoord. Een client kan zelfs een request annuleren als er geen response meer nodig is van de server.
+op een antwoord. Een client kan zelfs een request annuleren als er geen response meer nodig is van de server.\newline
 ~\autocite{freecodecamp}\\
 
 Bij gRPC moet er ook rekening gehouden worden met versionering, breaking changes kunnen tot fouten bij clients kunnen leiden.
 Bij protobuf zijn er binaire breaking changes die het protoc niet breken maar waarbij de clients wel moeten aangepast worden en protocol breaking changes
 die ook effectief het protocol breken en tot gevolg geven dat de clients de status ``UNIMPLEMENTED`` verkrijgt. De versienummer wordt toegevoegd aan
-het .proto bestand. Meerdere versies supporteren houdt in dat de applicatie zal moeten gedupliceerd worden.
+het .proto bestand. Meerdere versies supporteren houdt in dat de applicatie zal moeten gedupliceerd worden.\\
 
+Net zoals bij een REST API is het voor een gRPC API aan best practice dat paging wordt geimplementeerd wanneer er collecties kunnen worden opgehaald.
+Google zelf heeft een in haar API design guide een sectie gewijd aan List Pagination~\parencite{googlepaging}. Zelfs indien de verzonden datasets meestal
+klein zijn raden ze aan om paginatie te supporteren. De aangegeven rationale is dat wanneer een API paginatie niet supporteert het later
+problemen zou kunnen geven om dit toe te voegen gezien het gedrag van het API daarmee gebroken zou worden. Clients zouden zich zo niet bewust zijnn van het feit
+dat er dan geen volledig resultaat meer wordt verzonden maar slechts een subset. In de design guide adviseren ze een string veld ''page\_token'' in de request message
+van de gRPC functie te voorzien waarmee een specifieke pagina kan opgevraagd worden. Een int32  veld ''page\_size'' om de pagina grootte aan te geven.
+En tot slot een string veld  ''next\_page\_token'' dat aangeeft of er nog een volgende pagina is en kan gebruikt worden als in het veld ''page\_token''
+om die volgende pagina effectief op te vragen.\newline
 ~\autocite{grpcversion}\\
 
 \section{REST vs gRPC}
@@ -152,8 +352,8 @@ Bij het overlopen van de kenmerken van REST en gRPC komen direct enkele belangri
 Het feit dat REST werkt met het HTTP 1.1 en gRPC met het HTTP 2 protocol heeft ingrijpende gevolgen. HTTP 2 heeft alle mogelijkheden van het 1.1 protocol,
 maar voegt daar de hierboven opgesomde functionaliteiten aan toe (Request multiplexing, Request prioritization, Automatic compressing,
 Server push en haar binaire vorm). Deze bijkomende functionaliteiten zijn voornamelijk toegespitst op een verbetering van de performantie en efficiëntie van dataoverdracht.
-Daarentegen zorgt het gebruik van HTTP2 door gRPC wel voor het nadeel dat er geen rechtstreekse communicatie met browsers mogelijk is.
-~\autocite{cloudflare}
+Daarentegen zorgt het gebruik van HTTP2 door gRPC wel voor het nadeel dat er geen rechtstreekse communicatie met browsers mogelijk is.\newline
+~\autocite{cloudflare}\\
 ~\autocite{tutsplus}\\
 
 Een tweede belangrijk verschil is zichtbaar bij de protocol buffers van gRPC versus het gewone tekst formaat dat gebruikt wordt bij REST-API's.
@@ -162,30 +362,49 @@ Protobuf is gelijkaardig aan JSON in die zin dat het beiden programmeer-taal ona
 Protobug gaat verder dan JSON en is eerder een mechanisme voor het serialiseren en de-serialiseren van data.
 JSON is leesbaar voor mensen terwijl het binaire formaat bij Protobuf dat niet is~\parencite{json}
 Bij deze protocol buffers wordt de datastructuur éénmaal vastgelegd en gaat de gegenereerde code van gRPC de serialisatie en deserialisatie van de data verzorgen.
-Dit serialisatieproces zorgt dat data compact gemaakt wordt voordat ze wordt verzonden wat een performantiewinst zou betekenen. ~\autocite{googleprotobufguide}\\
+Dit serialisatieproces zorgt dat data compact gemaakt wordt voordat ze wordt verzonden wat een performantiewinst zou betekenen.\newline
+~\autocite{googleprotobufguide}\\
 
 Daar staat wel tegenover dat de data, zoals vermeld, steeds vooraf gedefinieerd dient te worden.
 Het verzenden van dynamische data maakt het voordeel dat bereikt wordt tijdens de serialisatie namelijk ongedaan.\\
 
 REST heeft een grotere simpliciteit dan gRPC. Er is bij REST enkel een http-compatible client nodig om een applicatie te ontwikkelen terwijl
 er bij gRPC steeds protobuf nodig is voor het deserialisatieproces. Toch moet er ook rekening gehouden worden met het feit dat bij REST,
-afhankelijk van de programmeertaal waarme gewerkt wordt, ook een serialisatieproces nodig is. Zo words bij Java ondermeer gebruik gemaakt van Jackson.\\
+afhankelijk van de programmeertaal waarme gewerkt wordt, ook een serialisatieproces nodig is. Zo words bij Java ondermeer gebruik gemaakt van Jackson.\newline
 ~\autocite{jackson}
 
 Beide technologiën laten toe de server en client volledig van elkaar te scheiden waardoor ze goed schaalbaar zijn.
 
 Breaking changes zijn zowel voor gRPC als REST een mogelijks probleem voor de clients waardoor er met versionering moet gewerkt worden.
 REST laat toe verschillende versies te supporteren met één applicatie die bepaalde logica herbruikt. Bij gRPC daarentegen wordt code gegenereerd op basis van
-het schema waardoor er duplicatie zal zijn bij verschillende versies.
+het schema waardoor er duplicatie zal zijn bij verschillende versies.\newline
 ~\autocite{grpcversion}
 
 gRPC is minder wijdverspreid dan REST. Dit geeft voordelen voor REST, gaande van gekende best practices, oplossingen voor allerhande problemen
-tot simpelweg ontwikkelaars met ervaring vinden. Kijk maar naar het aantal vragen op stackoverflow voor REST, op vandaag 93164 ~\parencite{stackrest},
-versus die voor gRPC, op heden 6025 ~\parencite{stackgrpc}. De grafiek in figuur 2.1 toont wel aan dat het aantal vragen over gRPC in stijgende lijn gaat terwijl
+tot simpelweg ontwikkelaars met ervaring vinden. Kijk maar naar het aantal vragen op stackoverflow voor REST, op vandaag 93395 ~\parencite{stackrest},
+versus die voor gRPC, op heden 6110 ~\parencite{stackgrpc}. De grafiek in figuur 2.1 toont wel aan dat het aantal vragen over gRPC in stijgende lijn gaat terwijl
 dit voor REST licht dalend is.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1.0\linewidth]{stackoverflowgrpcrest}
-    \caption{Percentage Stack Overflow vragen per maand voor gRPV en REST,\newline
+    \caption{[Percentage Stack Overflow vragen per maand voor gRPC en REST]Percentage Stack Overflow vragen per maand voor gRPC en REST,\newline
         https://insights.stackoverflow.com/trends?tags=grpc\%2Crest}
 \end{figure}\\
+\nocite{stackoverflowRESTgRPC}
+
+Tot slot is het ook interessant om deze laatste grafiek nog eens te bekijken, ditmaal echter met alle eerder genoemde API vari\"eteiten.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\linewidth]{stackoverflowRESTgRPCSOAPGraphQL}
+    \caption{[Percentage Stack Overflow vragen per maand voor REST, SOAP GraphQL en gRPC]Percentage Stack Overflow vragen per maand voor REST, SOAP GraphQL en gRPC,\newline
+    https://insights.stackoverflow.com/trends?tags=grpc\%2Crest}
+\end{figure}\\
+\nocite{stackoverflowRESTgRPCSOAPGraphQL}
+
+
+%+ xml json
+%+ gRPC REST SOAP HTML, .... evolutie van HTTP API's
+%+ Serialisatie gRPC en REST + vergelijking -> meer in detail hoe de gRPC serialisatie werkt
+%+ syntax proto https://protobuf.dev/getting-started/javatutorial/#:~:text=proto%20file%20are%20simple%3A%20you,proto%20.
+% toch nog meer zeggen over proto bestand delen? vgl met soap wat waren daar de nadelen van -> aansluiten bij versionering? waarom is proto een gedoe
