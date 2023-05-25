@@ -28,50 +28,6 @@ Gradle is een build automation tool dat ook dependency management verzorgt, waar
 Deze twee modules kunnen apart gebuild en gedeployed worden.\newline
 ~\autocite{Gradle}\\
 
-Als deployment platform, is er geopteerd om OpenShift te gebruiken. Dit had meerdere redenen: eerst en vooral, OpenShift geldt als een enterprise
-ready Kubernetes cluster. Een Kubernetes cluster is een orchestration tool voor container platforms met onderliggend een set van gelinkte servers (nodes) waarop
-containerized applicaties gedeployed kunnen worden.
-Entreprise ready duidt op het feit dat OpenShift reeds in een aantal functionaliteiten (security, stabiele upgrades, stabiliteit, \ldots)
-voorziet zodat de configuratie opzet en het deployment proces makkelijker verlopen.
-Hierdoor zou er sneller moeten gestart kunnen worden met wat echt het achterliggende doel nl. het hosten en deployen van de applicatie.
-OpenShift heeft ook een administrator en developer view, waarbij vooral de developer view het gemakkelijk maakt om applicaties te gaan deployen
-zonder de interne werken van Kubernetes door-en-door te moeten kennen.
-Tot slot biedt Red Hat een gratis sandbox aan om een maand lang mee te werken. Verder in de tekst wordt met OpenShift of Kubernetes beiden gerefereerd naar de deploy omgeving,
-omdat OpenShift uiteindelijk ook gewoon Kubernetes is.\newline
-~\autocite{redhatwhatiskubernetes}
-
-%TODO add link https://www.redhat.com/en/engage/rh-openshift-kubernetes-s-202102241206?sc_cid=7013a0000026OShAAM&gad=1&gclid=EAIaIQobChMIk4qdpe2P_wIVroCDBx26lAaCEAAYASAAEgLLOvD_BwE&gclsrc=aw.ds
-%TODO add link https://www.redhat.com/en/technologies/cloud-computing/openshift
-%TODO add link https://developers.redhat.com/contributor/dashboard
-
-Om een microservice met een REST API in Kubernetes opgezet te krijgen, zijn er drie configuratie bestanden nodig: een deployment config,
-een service config en een route config.
-%TODO add link https://docs.openshift.com/container-platform/3.11/dev_guide/deployments/how_deployments_work.html
-\begin{itemize}
-    \item Deployment config: bevat onder andere de docker image die gebruikt moet worden, de namespace en de resource reservations zoals geheugen en CPU.
-    \item Service config: is de interne DNS binnen Kubernetes en laat applicaties to om andere applicaties via service naam aan te spreken.
-    \item Route config: is een config om services extern beschikbaar te stellen. Dit houdt in dat je van buiten de Kubernetes cluster (e.g., web applicatie,
-    laptop, \ldots aan je deployment kan)
-\end{itemize}
-
-\#Process van opzetten
-Kubernetes deployments zijn eenvoudig in een REST context, in een gRPC context bleek het toch iets uitdagender te zijn. Reden: de harde
-dependency van gRPC op TLS\/SSL. We moesten de Kubernetes\/OpenShift routes gaan configureren om, in plaat van op de Ingress controllers, TLS
-verificatie over te laten aan de deployments (i.e., containers\/PODs). Dit vereiste in een eerste stap dat TLS terminatie van de route
-geconfigureerd werd als ''passthrough'' in plaats van ''edge''.
-
-Daarnaast moesten we ook aan gevalideerde certificaten geraken (i.e., gRPC laat geen manueel getekende certificaten toe). Hiervoor maakten we
-gebruik van Let's Encrypt om certificaten te genereren. Volgende moeilijkheid: hoe doen we dit binnen een Kubernetes/OpenShift omgeving?
-OpenShift\/Kubernetes heeft het concept van operators: dit zijn componenten binnen de cluster die heel wat infrastructuur werk overnemen van jou.
-Bepaalde installaties (e.g., Kafka, cert manager, \ldots) worden hierdoor voor jou mogelijk binnen een paar kliks. We installeerden dan de
-cert-manager operator, configureerden een issuer en lieten dan een certificate request genereren. Dit request wordt opgeslagen in een Kubernetes
-secret en ge\"{\i}njecteerd in een Kubernetes\/OpenShift deployment. Op deze manier krijgt de applicatie direct de nieuwe certificaten toegewezen
-wanneer deze opnieuw gegenereerd worden.
-
-Toen dit opgezet was, konden we beginnen aan de deployment, service en route wrap-up\ldots
-Het heeft wat zweet gekost, maar uiteindelijk is gRPC aan de praat gekregen op een online Kuberentes\/OpenShift omgeving.
-De verschillende resource files kunnen teruggevonden worden in application\_server\/configuration/metadata
-
 \paragraph{Server applicatie}
 
 Voor alle stadia van het onderzoek wordt er gebruik gemaakt van een java server applicatie die zowel een REST en gRPC API aanbiedt.
@@ -80,26 +36,25 @@ De eerste keer dat een lijst wordt opgevraagd wordt de data gegenereerd en opges
 Op deze wijze is er zekerheid dat het genereren van de data slechts op de 1e maal dat het API wordt aangereoepen een vertragend effect zal hebben.
 Een persoon instantie bevat 5 variabelen die tijdens het genereren van de data m.b.v.\ RandomStringUtils~\parencite{RandomStringUtils}
 en RandomDataGenerator~\parencite{RandomDataGenerator} van Apache Commons opgevuld worden met willekeurige tekst of cijfers naargelang het type van variabele.
-Voor elk gevraagd aantal zal de eerste request als opwarming dienen en niet worden gebruikt worden als vergelijking.
+Voor elk gevraagd aantal zal de eerste request als opwarming dienen en niet worden gebruikt worden als vergelijking.\\
+
 De java applicatie is ontwikkeld met behulp van het Quarkus framework. Quarkus geldt als Cloud-Native Java omdat het een aantal pijnpunten van (voornamelijk) legacy
-Spring en SpringBoot projecten gaat tacklen: Bij de opkomst van Cloud Computing, hadden de meeste Java applicaties problemen met resources en start-up tijden.
+Spring en SpringBoot projecten gaat tackelen: Bij de opkomst van Cloud Computing hadden de meeste Java applicaties problemen met resources en start-up tijden.
 Spring(Boot) applicaties hebben voornamelijk bij de opstart heel veel geheugen nodig, waardoor dit ook moet gereserveerd blijven wanneer de applicatie aan het draaien is.
-Hierdoor maak je geen effici\"ent gebruik van je resources (en betaal je bij gevolg te veel). Ook de start-up tijd baarde wat zorgen: uit ervaring blijkt een SpringBoot applicatie op te starten
-binnen een tiental seconden tot een paar minuten. Het grootste probleem is voormelijk het overmatig gebruik van reflectie en het wiren at-runtime. Quarkus (en andere Cloud-Native Java frameworks)
-gaan dit tacklen door (in combinatie met GraalVM) ahead-of-time compilatie te voorzien, dode code te verwijderen, \ldots waardoor opstarttijden gereduceerd worden tot een paar milliseconden en
-de executables (meestal docker images) een heel pak kleiner worden. Bij bijvoorbeeld serverless is niet alleen de opstarttijd van belang, maar ook de tijd om de executables te downloaden.
-Hierdoor kan Java in de cloud terug de concurentie aangaat met scripting talen zoals Python en TypeScript, welke deze opstartproblematiek niet of minder hadden/hebben.
-Quarkus biedt zowel ondersteuning voor REST als voor gRPC.\newline
-%TODO add link https://www.redhat.com/en/engage/supersonic-java-quarkus-s-201910090233?sc_cid=7013a0000026On6AAE&gad=1&gclid=EAIaIQobChMIpJWsiOmP_wIVjtJ3Ch2krgTCEAAYASAAEgL0BvD_BwE&gclsrc=aw.ds
-%TODO add link https://www.redhat.com/en/topics/cloud-native-apps/what-is-quarkus
-%TODO add link https://medium.com/@Gladiator444/quarkus-io-moving-from-200mb-to-1mb-10-seconds-to-100-milliseconds-bc0889a3050
+Hierdoor maak je geen effici\"ent gebruik van je resources met ook hogere kosten als gevolg. Quarkus (en andere Cloud-Native Java frameworks) kent ook een, in vergelijking met Spring,
+zeer korte opstarttijd door bijvoorbeeld (in combinatie met GraalVM) ahead-of-time compilatie te voorzien en dode code te verwijderen.
+Praktisch kunnen opstarttijden gereduceerd worden tot een paar milliseconden alsook worden de executables (meestal docker images) een heel pak kleiner worden.
+Hierdoor kan Java in de cloud terug de concurentie aangaat met scripting talen zoals Python en TypeScript, welke deze opstartproblematiek niet, of alleszins minder, hebben.
+Tot slot biedt Quarkus biedt zowel ondersteuning voor REST als voor gRPC, een primaire vereiste voor deze applicatie.\newline
+~\autocite{reasonQuarkus}\\
+~\autocite{whatisQuarkus}\\
+~\autocite{reasonQuarkus2}\\
 ~\autocite{quarkusAbout}\\
 
 Voor de REST API maakt Quarkus gebruik van RESTEasy, een Jakarta REST-implementatie. Jakarta REST is een REST API-standaard voor Java.
 Het serialisatieproces naar JSON gebeurd d.m.v Jackson en gebeurd automatisch door het Quarkus framework.
-Het framework voorziet ook in de mogelijkheid om de data te comprimeren voor ze te verzenden.
+Het framework voorziet normaal ook in de mogelijkheid om de data te comprimeren voor ze te verzenden.
 Het serialiseringsproces naar JSON door Jackson, de compressie en decompressie voor REST alsook het serialisering- en compressieproces bij gRPC zullen telkens opnieuw moeten gebeuren.
-Deze processen moeten immers ook deel uitmaken van het vergelijkend onderzoek.
 Deze processen moeten immers ook deel uitmaken van het vergelijkend onderzoek.
 Het REST API wordt voorzien in de klasse People5Resource, boven de definitie van deze klasse wordt een @Path annotatie voorzien waarbij
 het eerste deel van de url, ''/people5'', die voor alle endpoints gelijk is, als value wordt meegegeven.
@@ -134,7 +89,7 @@ Op basis van dit bestand zal de protocol buffer compiler code genereren.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1.0\linewidth]{protobestand}
-    \caption{[.proto bestand].proto bestand}
+    \caption{.proto bestand}
 \end{figure}
 
 Het bestand start met aan te geven welke syntax gebruikt wordt, in dit geval is dat versie 3, de meest recente versie, van de protocol buffers.
@@ -178,8 +133,49 @@ via een API bloot te stellen, maar daarentegen om te zetten naar zogenaamde data
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1.0\linewidth]{gegenereerdeklassengrpc}
-    \caption{[Door protoc buffer compiler gegenereerde klassen]Door protoc buffer compiler gegenereerde klassen}
+    \caption{Door protocol buffer compiler gegenereerde klassen}
 \end{figure}
+
+Als deployment platform, is er geopteerd om OpenShift te gebruiken. OpenShift geldt als een enterprise ready Kubernetes cluster.
+Een Kubernetes cluster is een orchestration tool voor container platforms met onderliggend een set van gelinkte servers (nodes)
+waarop containerized applicaties gedeployed kunnen worden.
+Entreprise ready duidt op het feit dat OpenShift reeds in een aantal functionaliteiten (security, stabiele upgrades, stabiliteit, \ldots)
+voorziet zodat de configuratie opzet en het deployment proces makkelijker verlopen.
+Hierdoor zou er sneller moeten gestart kunnen worden met het echte doel nl. het hosten en deployen van de applicatie.
+OpenShift heeft ook een administrator en developer view, waarbij vooral de developer view het gemakkelijk maakt om applicaties te gaan deployen
+zonder de interne werken van Kubernetes door-en-door te moeten kennen.
+Tot slot biedt Red Hat een gratis sandbox aan om een maand lang mee te werken. Verder in de tekst wordt met OpenShift of Kubernetes beiden gerefereerd naar de deploy omgeving,
+omdat OpenShift uiteindelijk ook gewoon Kubernetes is.\newline
+~\autocite{redhatwhatiskubernetes}\\
+~\autocite{redhatopenshiftkubernetes}\\
+~\autocite{redhatopenshift}
+
+Om een microservice met een REST API in Kubernetes opgezet te krijgen, zijn er drie configuratie bestanden nodig: een deployment config,
+een service config en een route config.~\parencite{openshiftDeployment}
+\begin{itemize}
+    \item Deployment config: bevat onder andere de docker image die gebruikt moet worden, de namespace en de resource reservations zoals geheugen en CPU.
+    \item Service config: is de interne DNS binnen Kubernetes en laat applicaties to om andere applicaties via service naam aan te spreken.
+    \item Route config: is een config om services extern beschikbaar te stellen. Dit houdt in dat je van buiten de Kubernetes cluster (e.g., web applicatie,
+    laptop, \ldots aan je deployment kan)
+\end{itemize}
+
+\#Process van opzetten
+Kubernetes deployments zijn eenvoudig in een REST context, in een gRPC context bleek het toch iets uitdagender te zijn. Reden: de harde
+dependency van gRPC op TLS\/SSL. We moesten de Kubernetes\/OpenShift routes gaan configureren om, in plaat van op de Ingress controllers, TLS
+verificatie over te laten aan de deployments (i.e., containers\/PODs). Dit vereiste in een eerste stap dat TLS terminatie van de route
+geconfigureerd werd als ''passthrough'' in plaats van ''edge''.
+
+Daarnaast moesten we ook aan gevalideerde certificaten geraken (i.e., gRPC laat geen manueel getekende certificaten toe). Hiervoor maakten we
+gebruik van Let's Encrypt om certificaten te genereren. Volgende moeilijkheid: hoe doen we dit binnen een Kubernetes/OpenShift omgeving?
+OpenShift\/Kubernetes heeft het concept van operators: dit zijn componenten binnen de cluster die heel wat infrastructuur werk overnemen van jou.
+Bepaalde installaties (e.g., Kafka, cert manager, \ldots) worden hierdoor voor jou mogelijk binnen een paar kliks. We installeerden dan de
+cert-manager operator, configureerden een issuer en lieten dan een certificate request genereren. Dit request wordt opgeslagen in een Kubernetes
+secret en ge\"{\i}njecteerd in een Kubernetes\/OpenShift deployment. Op deze manier krijgt de applicatie direct de nieuwe certificaten toegewezen
+wanneer deze opnieuw gegenereerd worden.
+
+Toen dit opgezet was, konden we beginnen aan de deployment, service en route wrap-up\ldots
+Het heeft wat zweet gekost, maar uiteindelijk is gRPC aan de praat gekregen op een online Kuberentes\/OpenShift omgeving.
+De verschillende resource files kunnen teruggevonden worden in application\_server\/configuration/metadata
 
 De server applicatie wordt gedeployed naaar OpenShift van Red Hat. Op OpenShift is HTTP2 en dus ook gRPC connectiviteit steeds met gebruik van TLS protocol.
 Gezien het gebruik van TLS bij gRPC ook als best practice gezien wordt, zoals eerder gemeld in de stand van zaken, zal het hier mee onderdeel uitmaken van performantie testen.\newline

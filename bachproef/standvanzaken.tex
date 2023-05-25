@@ -19,6 +19,7 @@
 In dit hoofdstuk wordt eerst bekeken wat een API juist is. De precieze werking van REST alsook van gRPC worden daarna grondig onderzocht met extra aandacht voor
 eventuele aspecten die de performantie kunnen beïnvloeden. Tot slot worden beide technologie\"en ook met elkaar vergeleken.
 
+
 \section{API}
 
 Een application programming interface, vaker API genoemd, is een connectie tussen computers of applicaties.
@@ -42,7 +43,9 @@ gRPC daarentegen is een implementatie van Google van de RPC specificatie.\\
 Buiten REST en gRPC zijn er nog verschillende vari\"eteiten van web API's welke niet verder aan bod zullen komen in deze scriptie, maar die toch interesssant zijn om
 te vermelden en kort te vergelijken met de twee welke het onderwerp zijn van dit onderzoek.
 
-~\paragraph{SOAP}
+~
+
+\paragraph{SOAP}
 Simple Objects Access Protocol ofwel kort SOAP is een web communicatie protocol ontwikkeld voor Microsoft in 1998. Het wordt op vandaag het meeste gebruikt om
 web services aan te bieden data via HTTP of HTTPS(HTTP over TLS of SSL) maar kan ook gebruikt worden bij b.v. FTP en SMTP.
 Bij SOAP wordt data, in XML formaat, steeds via een standaard XML schema (XSL) ge\"encodeerd. Zo worden berichten, requests en responses, als volgt gestructureerd:
@@ -61,7 +64,9 @@ waardoor een aanpassing een vervelend en omvangrijk proces kan worden.\newline
 ~\autocite{soap}\\
 ~\autocite{redhatapissoaprestgraphqlgrpc}\\
 
-~\paragraph{GraphQL}
+~
+
+\paragraph{GraphQL}
 GraphQL is een technologie die eerst werd ontwikkeld door Facebook maar werd intussen open-source gemaakt. Bij GraphQL wordt de communicatie gestart doordat de
 client een HTTP POST request verstuurd naar de server. In de body van die request zit een GraphQL query of mutation die aangeeft welke data respectievelijk wordt
 opgevraagd of gewijzigd. De inhoud van deze quary moet in eerste instantie voldoen aan specificaties van GraphQL zelf, maar daarnaast ook aan het schema dat gedefinieerd
@@ -89,10 +94,11 @@ zichtbaar
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1.0\linewidth]{stackoverflowSOAPGraphQL}
-    \caption{[Percentage Stack Overflow vragen per maand voor SOAP en GraphQL]Percentage Stack Overflow vragen per maand voor SOAP en GraphQL,\newline
+    \caption{Percentage Stack Overflow vragen per maand voor SOAP en GraphQL,\newline
     https://insights.stackoverflow.com/trends?tags=soap\%2Cgraphql}
 \end{figure}\\
 \nocite{stackoverflowSOAPGraphQL}
+
 
 \section{REST}
 
@@ -107,7 +113,7 @@ De API moet de mogelijkheid hebben om de response op te maken op basis van de be
 ~\autocite{guru99-webservices}\\
 
 Opdat een API als RESTfull kan worden beschouwd moet het aan enkele kenmerken voldoen.\\
-Ten eerste dient het, voor de communicatie, gebruik te maken van het HTTP 1.1 protocol. Het protocol, dat zich in de applicatie laag situeert,
+Ten eerste dient het, voor de communicatie, op zijn minst gebruik te maken van het HTTP 1.1 protocol. Het protocol, dat zich in de applicatie laag situeert,
 bepaalt dat de client een request, met tekst als vorm, verstuurt naar de server waarop die de gevraagde gegevens terugzendt.
 HTTP specificeert verschillende soorten requests methods waaronder GET, POST, PUT en DELETE. Een REST API kan van al deze methods gebruik maken en zal dat
 hoogstwaarschijnlijk ook doen. HTTP 1.1 houdt een TCP-connectie open tot er uitdrukkelijk opdracht gegeven wordt om deze te sluiten.
@@ -169,15 +175,16 @@ Stel dat via een REST API een lijst van boeken kan opgevraagd worden via een GET
 van 3 boeken zou er dan bijvoorbeeld zo kunnen uitzien:\newline
 https://www.hogent.be/boeken?page=0\&pageSize=3
 Het antwoord van de server, in JSON formaat, zou dan als volgt kunnen zijn:\newline
-    \{
-        ''page'': 0,
-        ''pageSize'': 3,
-        ''totalCount'': 50,
-        ''totalPages'': 17,
-        ''results'': [\ldots]
-    \}\newline
+\{
+''page'': 0,
+''pageSize'': 3,
+''totalCount'': 50,
+''totalPages'': 17,
+''results'': [\ldots]
+\}\newline
 ~\autocite{paging}\\
 ~\autocite{wachtenLaadtijd}\\
+
 
 \section{gRPC}
 
@@ -277,21 +284,21 @@ het .proto bestand. De client applicatie kan dan de methodes van de stub aanroep
         \toprule
         \textbf{.proto type} & \textbf{Java Type} & \textbf{C\# Type} \\
         \midrule
-        double & double & double \\
-        float & float & float \\
-        int32 & int & int \\
-        int64 & long & long \\
-        uint32 & int & uint \\
-        uint64 & long & ulong \\
-        sint32 & int & int \\
-        sint64 & long & long \\
-        fixed32 & int & uint \\
-        fixed64 & long & ulong \\
-        sfixed32 & int & int \\
-        sfixed64 & long & long \\
-        bool & boolean & bool \\
-        string & String & string \\
-        bytes & ByteString & ByteString \\
+        double               & double             & double            \\
+        float                & float              & float             \\
+        int32                & int                & int               \\
+        int64                & long               & long              \\
+        uint32               & int                & uint              \\
+        uint64               & long               & ulong             \\
+        sint32               & int                & int               \\
+        sint64               & long               & long              \\
+        fixed32              & int                & uint              \\
+        fixed64              & long               & ulong             \\
+        sfixed32             & int                & int               \\
+        sfixed64             & long               & long              \\
+        bool                 & boolean            & bool              \\
+        string               & String             & string            \\
+        bytes                & ByteString         & ByteString        \\
         \bottomrule
     \end{tabular}
     \caption{[Primitieve .proto types]Primitieve .proto types,\newline
@@ -340,10 +347,11 @@ Google zelf heeft een in haar API design guide een sectie gewijd aan List Pagina
 klein zijn raden ze aan om paginatie te supporteren. De aangegeven rationale is dat wanneer een API paginatie niet supporteert het later
 problemen zou kunnen geven om dit toe te voegen gezien het gedrag van het API daarmee gebroken zou worden. Clients zouden zich zo niet bewust zijnn van het feit
 dat er dan geen volledig resultaat meer wordt verzonden maar slechts een subset. In de design guide adviseren ze een string veld ''page\_token'' in de request message
-van de gRPC functie te voorzien waarmee een specifieke pagina kan opgevraagd worden. Een int32  veld ''page\_size'' om de pagina grootte aan te geven.
-En tot slot een string veld  ''next\_page\_token'' dat aangeeft of er nog een volgende pagina is en kan gebruikt worden als in het veld ''page\_token''
+van de gRPC functie te voorzien waarmee een specifieke pagina kan opgevraagd worden. Een int32 veld ''page\_size'' om de pagina grootte aan te geven.
+En tot slot een string veld ''next\_page\_token'' dat aangeeft of er nog een volgende pagina is en kan gebruikt worden als in het veld ''page\_token''
 om die volgende pagina effectief op te vragen.\newline
 ~\autocite{grpcversion}\\
+
 
 \section{REST vs gRPC}
 
@@ -392,8 +400,8 @@ dit voor REST licht dalend is.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1.0\linewidth]{stackoverflowgrpcrest}
-    \caption{[Percentage Stack Overflow vragen per maand voor gRPC en REST]Percentage Stack Overflow vragen per maand voor gRPC en REST,\newline
-        https://insights.stackoverflow.com/trends?tags=grpc\%2Crest}
+    \caption{Percentage Stack Overflow vragen per maand voor gRPC en REST,\newline
+    https://insights.stackoverflow.com/trends?tags=grpc\%2Crest}
 \end{figure}\\
 \nocite{stackoverflowRESTgRPC}
 
@@ -402,7 +410,7 @@ Tot slot is het ook interessant om deze laatste grafiek nog eens te bekijken, di
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1.0\linewidth]{stackoverflowRESTgRPCSOAPGraphQL}
-    \caption{[Percentage Stack Overflow vragen per maand voor REST, SOAP GraphQL en gRPC]Percentage Stack Overflow vragen per maand voor REST, SOAP GraphQL en gRPC,\newline
+    \caption{Percentage Stack Overflow vragen per maand voor REST, SOAP GraphQL en gRPC,\newline
     https://insights.stackoverflow.com/trends?tags=grpc\%2Crest}
 \end{figure}
 \nocite{stackoverflowRESTgRPCSOAPGraphQL}
