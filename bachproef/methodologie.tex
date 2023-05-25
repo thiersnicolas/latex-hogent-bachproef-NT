@@ -7,64 +7,127 @@
 
 \section{Inleiding}
 
-Voor het analyseren van het performantieverschil tussen REST en gRPC is er voor beide technologi\"en een server nodig die een api aanbiedt dat geconsumeerd kan worden en
-een client die deze server aanroept.
-De tijdsduur tussen de start en einde van de request, m.a.w. tussen het aanroepen van het api door de client
+Voor het analyseren van het performantieverschil tussen REST en gRPC is er voor beide technologi\"en een server nodig die een API aanbiedt dat geconsumeerd kan worden en
+een client die deze server aanroept. Bij dit onderzoek zal de focus niet gelegd worden op het bekomen van benchmark testen waarbij alle factoren die invloed kunnen hebben
+zoveel mogelijk vermeden of uitgeschakeld worden. Er wordt getracht een realistisch scenario na te bootsen waarbij, in de parktijk, essenti\"ele stappen van zowel REST als gRPC
+ook effectief uitgevoerd worden.
+De grootte van de verzonden dataset tegenover de tijdsduur tussen de start en einde van de request, m.a.w. tussen het aanroepen van het API door de client
 tot het moment waarop alle gevraagde data bij de client toegekomen is, vormt het belangrijkste vergelijkingspunt.
 Er zullen verschillende datasets verstuurd worden opdat kan worden ge\"evalueerd in hoeverre deze grootte een impact heeft op de performantie.
-Aangezien er in de praktijk meestal een limiet wordt gezet op de toegelaten reponse body size wordt ook het effect van paginatie in beshouwing genomen.
+Aangezien er in de praktijk meestal een limiet wordt gezet op de toegelaten reponse body size wordt ook het effect van paginatie in beschouwing genomen.
 Voor REST zal het veelgebruikte JSON als serialisatie formaat dienen. Hiernaast zal, met als doel de performantie te optimaliseren,
-tevens naar een gecompresseerd formaat gekeken worden. gRPC zonder compressie lijkt in de praktijk weinig zinvol te zijn waardoor het geen onderdeel
-zal uitmaken van het vergelijkend onderzoek. Tot slot zal getracht worden de performantie van gRPC middels een Stream vast te leggen.\\
+tevens naar een gecomprimeerd formaat gekeken worden. gRPC zonder gebruik te maken van het serialisatieproces lijkt in de praktijk weinig zinvol te zijn waardoor het geen onderdeel
+zal uitmaken van dit vergelijkend onderzoek. Tot slot zal de performantie van gRPC middels een Stream ook vastgelegd worden.\\
 
 \section{Opzet}
+\label{sec:opzet}
 
-Zowel de server als client applicatie worden, in aparte modules, in één groot Gradle project geplaatst.
-Gradle is een build automation tool dat ook dependency management verzorgt. Deze twee modules kunnen apart gebuild en eventueel gedeployed worden.\newline
-~\autocite{Gradle}
+Zowel de server als client applicatie worden, in aparte modules, in \'e\'en groot Gradle project geplaatst, volgens de principes van Clean Architecture. Hoewel dit
+voor een kleine benchmark applicatie wat overkill lijkt, worden zoveel mogelijk best-practices van binnen de codeer wereld gevolgd. Elke applicatie start immers klein.
+Gradle is een build automation tool dat ook dependency management verzorgt, waardoor het als alternatief geldt voor Maven en Ant. %TODO op verdeding kunnen we eens vragen "waarom gradle"
+Deze twee modules kunnen apart gebuild en gedeployed worden.\newline
+~\autocite{Gradle}\\
+
+Als deployment platform, is er geopteerd om OpenShift te gebruiken. Dit had meerdere redenen: eerst en vooral, OpenShift geldt als een enterprise
+ready Kubernetes cluster. Een Kubernetes cluster is een orchestration tool voor container platforms met onderliggend een set van gelinkte servers (nodes) waarop
+containerized applicaties gedeployed kunnen worden.
+Entreprise ready duidt op het feit dat OpenShift reeds in een aantal functionaliteiten (security, stabiele upgrades, stabiliteit, \ldots)
+voorziet zodat de configuratie opzet en het deployment proces makkelijker verlopen.
+Hierdoor zou er sneller moeten gestart kunnen worden met wat echt het achterliggende doel nl. het hosten en deployen van de applicatie.
+OpenShift heeft ook een administrator en developer view, waarbij vooral de developer view het gemakkelijk maakt om applicaties te gaan deployen
+zonder de interne werken van Kubernetes door-en-door te moeten kennen.
+Tot slot biedt Red Hat een gratis sandbox aan om een maand lang mee te werken. Verder in de tekst wordt met OpenShift of Kubernetes beiden gerefereerd naar de deploy omgeving,
+omdat OpenShift uiteindelijk ook gewoon Kubernetes is.
+~\autocite{redhatwhatiskubernetes}
+
+%TODO add link https://www.redhat.com/en/engage/rh-openshift-kubernetes-s-202102241206?sc_cid=7013a0000026OShAAM&gad=1&gclid=EAIaIQobChMIk4qdpe2P_wIVroCDBx26lAaCEAAYASAAEgLLOvD_BwE&gclsrc=aw.ds
+%TODO add link https://www.redhat.com/en/technologies/cloud-computing/openshift
+%TODO add link https://developers.redhat.com/contributor/dashboard
+
+Om een microservice met een REST API in Kubernetes opgezet te krijgen, zijn er drie configuratie bestanden nodig: een deployment config,
+een service config en een route config.
+%TODO add link https://docs.openshift.com/container-platform/3.11/dev_guide/deployments/how_deployments_work.html
+\begin{itemize}
+    \item Deployment config: bevat onder andere de docker image die gebruikt moet worden, de namespace en de resource reservations zoals geheugen en CPU.
+    \item Service config: is de interne DNS binnen Kubernetes en laat applicaties to om andere applicaties via service naam aan te spreken.
+    \item Route config: is een config om services extern beschikbaar te stellen. Dit houdt in dat je van buiten de Kubernetes cluster (e.g., web applicatie,
+    laptop, \ldots aan je deployment kan)
+\end{itemize}
+
+\#Process van opzetten
+Kubernetes deployments zijn eenvoudig in een REST context, in een gRPC context bleek het toch iets uitdagender te zijn. Reden: de harde
+dependency van gRPC op TLS\/SSL. We moesten de Kubernetes\/OpenShift routes gaan configureren om, in plaat van op de Ingress controllers, TLS
+verificatie over te laten aan de deployments (i.e., containers\/PODs). Dit vereiste in een eerste stap dat TLS terminatie van de route
+geconfigureerd werd als ''passthrough'' in plaats van ''edge''.
+
+Daarnaast moesten we ook aan gevalideerde certificaten geraken (i.e., gRPC laat geen manueel getekende certificaten toe). Hiervoor maakten we
+gebruik van Let's Encrypt om certificaten te genereren. Volgende moeilijkheid: hoe doen we dit binnen een Kubernetes/OpenShift omgeving?
+OpenShift\/Kubernetes heeft het concept van operators: dit zijn componenten binnen de cluster die heel wat infrastructuur werk overnemen van jou.
+Bepaalde installaties (e.g., Kafka, cert manager, \ldots) worden hierdoor voor jou mogelijk binnen een paar kliks. We installeerden dan de
+cert-manager operator, configureerden een issuer en lieten dan een certificate request genereren. Dit request wordt opgeslagen in een Kubernetes
+secret en ge\"{\i}njecteerd in een Kubernetes\/OpenShift deployment. Op deze manier krijgt de applicatie direct de nieuwe certificaten toegewezen
+wanneer deze opnieuw gegenereerd worden.
+
+Toen dit opgezet was, konden we beginnen aan de deployment, service en route wrap-up\ldots
+Het heeft wat zweet gekost, maar uiteindelijk is gRPC aan de praat gekregen op een online Kuberentes\/OpenShift omgeving.
+De verschillende resource files kunnen teruggevonden worden in application\_server\/configuration/metadata
 
 \paragraph{Server applicatie}
 
 Voor alle stadia van het onderzoek wordt er gebruik gemaakt van een java server applicatie die zowel een REST en gRPC API aanbiedt.
 In dit geval zal het gaan om API's die toelaten een lijst van fictieve personen op te vragen. Het aantal personen dat verzonden wordt moet door de client worden aangegeven.
 De eerste keer dat een lijst wordt opgevraagd wordt de data gegenereerd en opgeslagen in het geheugen van de applicatie volgens het aantal gevraagde objecten.
-Op deze wijze is er zekerheid dat het genereren van de data slechts op de 1e maal dat het api wordt aangereoepen een vertragend effect zal hebben.
+Op deze wijze is er zekerheid dat het genereren van de data slechts op de 1e maal dat het API wordt aangereoepen een vertragend effect zal hebben.
 Een persoon instantie bevat 5 variabelen die tijdens het genereren van de data m.b.v.\ RandomStringUtils~\parencite{RandomStringUtils}
 en RandomDataGenerator~\parencite{RandomDataGenerator} van Apache Commons opgevuld worden met willekeurige tekst of cijfers naargelang het type van variabele.
 Voor elk gevraagd aantal zal de eerste request als opwarming dienen en niet worden gebruikt worden als vergelijking.
-De java applicatie is ontwikkeld met behulp van het Quarkus framework.
+De java applicatie is ontwikkeld met behulp van het Quarkus framework. Quarkus geldt als Cloud-Native Java omdat het een aantal pijnpunten van (voornamelijk) legacy
+Spring en SpringBoot projecten gaat tacklen: Bij de opkomst van Cloud Computing, hadden de meeste Java applicaties problemen met resources en start-up tijden.
+Spring(Boot) applicaties hebben voornamelijk bij de opstart heel veel geheugen nodig, waardoor dit ook moet gereserveerd blijven wanneer de applicatie aan het draaien is.
+Hierdoor maak je geen effici\"ent gebruik van je resources (en betaal je bij gevolg te veel). Ook de start-up tijd baarde wat zorgen: uit ervaring blijkt een SpringBoot applicatie op te starten
+binnen een tiental seconden tot een paar minuten. Het grootste probleem is voormelijk het overmatig gebruik van reflectie en het wiren at-runtime. Quarkus (en andere Cloud-Native Java frameworks)
+gaan dit tacklen door (in combinatie met GraalVM) ahead-of-time compilatie te voorzien, dode code te verwijderen, \ldots waardoor opstarttijden gereduceerd worden tot een paar milliseconden en
+de executables (meestal docker images) een heel pak kleiner worden. Bij bijvoorbeeld serverless is niet alleen de opstarttijd van belang, maar ook de tijd om de executables te downloaden.
+Hierdoor kan Java in de cloud terug de concurentie aangaat met scripting talen zoals Python en TypeScript, welke deze opstartproblematiek niet of minder hadden/hebben.
 Quarkus biedt zowel ondersteuning voor REST als voor gRPC.\newline
+%TODO add link https://www.redhat.com/en/engage/supersonic-java-quarkus-s-201910090233?sc_cid=7013a0000026On6AAE&gad=1&gclid=EAIaIQobChMIpJWsiOmP_wIVjtJ3Ch2krgTCEAAYASAAEgL0BvD_BwE&gclsrc=aw.ds
+%TODO add link https://www.redhat.com/en/topics/cloud-native-apps/what-is-quarkus
+%TODO add link https://medium.com/@Gladiator444/quarkus-io-moving-from-200mb-to-1mb-10-seconds-to-100-milliseconds-bc0889a3050
 ~\autocite{quarkusAbout}\\
 
-Voor de REST api maakt Quarkus gebruik van RESTEasy, een Jakarta REST-implementatie. Jakarta REST is een REST API-standaard voor Java.
+Voor de REST API maakt Quarkus gebruik van RESTEasy, een Jakarta REST-implementatie. Jakarta REST is een REST API-standaard voor Java.
 Het serialisatieproces naar JSON gebeurd d.m.v Jackson en gebeurd automatisch door het Quarkus framework.
 Het framework voorziet ook in de mogelijkheid om de data te comprimeren voor ze te verzenden.
 Het serialiseringsproces naar JSON door Jackson, de compressie en decompressie voor REST alsook het serialisering- en compressieproces bij gRPC zullen telkens opnieuw moeten gebeuren.
 Deze processen moeten immers ook deel uitmaken van het vergelijkend onderzoek.
-Het REST api wordt voorzien in de klasse People5Resource, boven de definitie van deze klasse wordt een @Path annotatie voorzien waarbij
+Deze processen moeten immers ook deel uitmaken van het vergelijkend onderzoek.
+Het REST API wordt voorzien in de klasse People5Resource, boven de definitie van deze klasse wordt een @Path annotatie voorzien waarbij
 het eerste deel van de url, ''/people5'', die voor alle endpoints gelijk is, als value wordt meegegeven.
 Er worden 3 endpoints aangeboden in dit REST API die zullen aangeroepen worden tijdens de testen. Een GET endpoint ''/people5/\{amount\}'' waarmee een gespecifieerde hoeveelheid
 personen kan opgevraagd worden. Dit komt overeen met de methode people5 welke voorzien ook voorzien wordt van een @Path annotatie
 die het specifiek voor dat endpoint nodige deel van de url meekrijgt als value nl. ''/\{amount\}''. Amount is hier een path variable. In de variabelen van
 de methode moet amount ook geannoteerd worden met @PathParam met hetzelfde value als in de url om het framework deze te laten doorgeven.
 Dankzij deze path variable worden bijvoorbeeld 5 personen opgevraagd via een GET request door middel van een variabele in de URI te voorzien b.v.
-people/5 of people/5/compressed.
-Een @GET annotatie wijst aan welke HTTP method naar deze methode geleid moet worden. @Produces zegt welk media type dit endpoint zal retourneren, hier is dat application JSON.
-Quarkus zal deze serialisatie automatisch verzorgen. Tot slot annoteren we de method met @Uncompressed om zeker te zijn dat Quarkus hier geen compressie zal toepassen.
-Een tweede GET endpoint ''/people5/\{amount\}/compressed'' met dezelfde werking, maar waarbij de data door Quarkus wordt gecomprimeerd alvorens ze wordt verzonden,
-wordt met de people5compressed methode gedefinie\"rd. Hier worden dezelfde annotatie geplaatst als het eerdere endpoint behalve de @Uncompressed welke vervangen
-wordt door @Compressed zodat Quarkus compressie toepast en ook wordt @Provides weggelaten.
-Voor beiden wordt de hoeveelheid aangegeven met een path variabele welke in het URI wordt geplaatst. Boven elke methode, die overeenkomen met een endpoint,
-wordt nogmaals een @Path annotatie voorzien die het specifiek voor dat endpoint nodige deel van de url meekrijgt als value.
+''people/5'' of ''people/5/compressed''.
+Een @GET annotatie wijst aan welke HTTP method naar deze methode geleid moet worden. @Produces zegt welk media type dit endpoint zal retourneren, hier is dat application/json
+voor het endpoint zonder compressie en application/octet-stream voor het endpoint voorzien van compressie.
+Quarkus zal deze serialisatie automatisch verzorgen. Tot slot annoteren we de method met @Uncompressed om zeker te zijn dat Quarkus zelf hier zeker geen compressie zal toepassen.
+Een tweede GET endpoint ''/people5/\{amount\}/compressed'' met dezelfde werking, maar waarbij de data wordt gecomprimeerd alvorens ze wordt verzonden,
+wordt met de people5compressed methode gedefinie\"rd. Tijdens het implementeren van beide applicaties bleek Quarkus, ondanks het volgen van de tutorial~\parencite{quarkusgzipcompressie}
+en een oplossing van een GitHub discussie ~\parencite{quarkusgzipcompressiegithub} uit te proberen, de compressie niet uit te voeren.
+Hierdoor is er gekozen de gzip compressie simpelweg zelf te implementeren middels een gzip methode welke grotendeels gebaseerd is op een gevonden voorbeeld~\parencite{gzipCompressie}.
+Deze methode aanvaard een Lijst van generieke objecten en geeft een byte array terug welke de gecomprimeerde data bevat.
+Voor beiden wordt de hoeveelheid objecten die geretourneerd moeten worden, aangegeven met een path variabele welke in het URI wordt geplaatst.
+Boven elke methode, die overeenkomen met een endpoint, wordt nogmaals een @Path annotatie voorzien die het specifiek voor dat endpoint nodige deel van de url meekrijgt als value.
 Via het derde endpoint kan de opgeslagen data, ook cache genaamd, worden leeggemaakt. Dit endpoint kan aangeroepen worden via een POST request naar
 de URI van de applicatie aangevuld met ''/people5/cleardata''. Hier worden ook weer een @Path annotatie voorzien met ''/cleardata'', een @POST annotatie om de HTTP method te
-specifi\"ren en nog een @Produces met application JSON voor het data formaat aan te geven. Indien de cache wordt leeggemaakt is dit voor beide beschikbare formaten van toepassing.
+specifi\"eren en nog een @Produces met ''application/json'' voor het data formaat aan te geven. Indien de cache wordt leeggemaakt is dit voor beide beschikbare formaten van toepassing.
 Dit endpoint geeft een lijst van de eerder opgevraagde hoeveelheden die nu in de cache zitten terug.
 Na het leegmaken van de cache zou dit dus steeds een lege lijst moeten zijn.\newline
 ~\autocite{quarkusREST}\\
 ~\autocite{Jakarta}\\
 
-Voor het gRPC api wordt gestart vanaf de Quarkus ''tutorial Getting Started With gRPC''~\parencite{quarkusgRPC}.
+Voor het gRPC API wordt gestart vanaf de Quarkus ''tutorial Getting Started With gRPC''~\parencite{quarkusgRPC}.
 Bij gRPC moet er een bestand gemaakt worden, met .proto als extensie, waarin alle procedures, welke ter beschikking zijn, worden vastgelegd.
 Op basis van dit bestand zal de protocol buffer compiler code genereren.
 
@@ -77,7 +140,7 @@ Op basis van dit bestand zal de protocol buffer compiler code genereren.
 Het bestand start met aan te geven welke syntax gebruikt wordt, in dit geval is dat versie 3, de meest recente versie, van de protocol buffers.
 Daarna volgen drie opties die specifek voor java applicaties dienen: ''java\_multiple\_files'', ''java\_package'' en ''java\_outer\_classname''.
 java\_multiple\_files staat op true zodat er een apart .java bestand gemaakt wordt voor elke gegenereerde klasse in plaats
-van één wrapper klass en in nested klasses daarvan alle andere klassen. Bij ''java\_package'' staat niet dezelfde package die in de rest van de applicatie gebruikt is
+van \'e\'en wrapper klass en in nested klasses daarvan alle andere klassen. Bij ''java\_package'' staat niet dezelfde package die in de rest van de applicatie gebruikt is
 maar in een proto subpackage zoals aangegeven in de best practices.
 Tot slot geeft de ''java\_outer\_classname'' optie aan dat People5GrpcProto moet gebruikt worden als naam voor de wrapper klasse van de service gedefineerd in dit .proto bestand.
 Daaronder wordt aangegeven welke package wordt gebruikt voor de gegenereerde code. Dit wordt overschreven door de ''java\_package'' optie die eerder gedefineerd werd maar
@@ -134,9 +197,11 @@ Verder wordt de interface zelf voorzien van de @Path annotatie met als String va
 aan alle endpoints gemeen is, meer specifiek /people5. Elke methode die voorzien wordt in de interface staat voor een endpoint dat kan aangesproken worden.
 Boven de clearData methode staat een @POST annotatie waarmee wordt aangegeven dat bij deze methode de POST HTTP-method moet gebruikt worden alsook
 nog een @Path annotatie met ´''/cleardata'' als value die de url verder specifieert. De people5 methode krijgt een @GET en een @Path annotatie, waarbij die laatste ''/{amount}''
-als value heeft. Deze methode heeft ook een parameter amount welke ook voorzien wordt van een @PathParam annotatie met ´amount` als value zodat Quarkus
-deze parameter als path parameter zal gebruiken. De derde methode people5Compressed is buiten de naam identiek als de people5 methode. Quarkus zal automatisch de compressie
-herkennen en decompresseren naar het originele formaat.
+als value heeft. Deze methode heeft ook een parameter amount welke ook voorzien wordt van een @PathParam annotatie met ''amount'' als value zodat Quarkus
+deze parameter als path parameter zal gebruiken. De derde methode people5Compressed is buiten de naam identiek als de people5 methode maar hier gaat het endpoint een
+byte array ontvangen wat aangegeven wordt door de @Consumes annotatie voorzien van ''application/octet-stream''. Het omzetten van de byte array naar de java objecten gebeurt
+in de test klasse, door middel van de methode gzipDecompressBytes, welke een byte array ontvangt en een lijst van generieke objecten teruggeeft,
+en zal nog mee onderdeel zijn van performantiemetingen, ze wordt dus uitgevoerd alvorens het ontvangen van de data geregistreerd wordt in de TestHelper klasse.
 ~\autocite{quarkusRESTclient}\\
 
 Voor de gRPC client moet weer een .proto bestand voorzien worden op basis waarvan de protocol buffer compiler de nodige code kan genereren. Gemakkelijkheidshalve wordt het
@@ -157,7 +222,7 @@ die Quarkus nodig heeft. Quarkus weet dankzij de opgegeven element name welke pr
 Om de gRPC client People5Grpc aan te spreken moeten dezelfde gegenereerde message klassen gebruikt worden als in de server applicatie.
 De clearData en de getPeople methode hebben beiden de wrapper klasse ''io.smallrye.mutiny.Uni'' als return type respectievelijk met de gegenereerde klassen
 SupportedAmount en GrpcPeople5, deze laatste bevat een lijst met GrpcPerson5 objecten. De getPeopleStream methode daarentegen geeft een ''io.smallrye.mutiny.Multi'' terug.
-Zowel Uni als Multi representeren een stream en zijn asynchrone types. Uni omvat slechts één item of een fout. Multi omvat 0 tot potentieel oneindig veel items.
+Zowel Uni als Multi representeren een stream en zijn asynchrone types. Uni omvat slechts \'e\'en item of een fout. Multi omvat 0 tot potentieel oneindig veel items.
 Voor Uni zal er gewoon op het item gewacht worden tot dit ontvangen is. Voor een Multi zal er gesubscribed worden en zullen er drie functies nodig zijn om
 de items te verwerken. De eerste functie, van het type ~\parencite{Consumer}, gaat elk item verwerken, de tweede functie, weer het type ~\parencite{Consumer},
 gaat eventuele failures verwerken en de derde functie, van het type ~\parencite{Runnable} wordt aangeroepen wanneer de call voltooid is.\newline
@@ -182,13 +247,14 @@ Wanneer het antwoord ontvangen is wordt de tijdsduur vastgelegd. Bij de REST cal
 en naar een file weggeschreven om zo de grootte van de dataset in JSON formaat te kunnen registreren.
 Tot slot gaat de TestHelper ook de logs, met daarin het resultaat van de performantietest, wegschrijven naar een file.
 De tweede methode testPerformance\_multipleRequests verwacht ook de testnaam, een lijst van amounts en daarnaast nog een integer genaamd batchSize.
-Tijdens het uitvoeren van deze method zullen de opgegeven aantallen opgehaald worden d.m.v. de API call meermaals uit te voeren met de batchSize als aantal
+Tijdens het uitvoeren van deze method zullen de opgegeven aantallen opgehaald worden door middel van de API call meermaals uit te voeren met de batchSize als aantal
 tot het totale gevraagd aantal is ontvangen. Ook hier wordt de tijd geregistreerd, maar dan van het ophalen van het volledige aantal d.m.v.
 verschillende calls van de opgegeven batch grootte.\\
 
 De broncode van dit project, dat zowel de server als client applicatie omvat, is publiek beschikbaar op Github via https://github.com/thiersnicolas/gRPC\_vs\_REST.git
 
 \section{Enkelvoudige requests}
+\label{enkelvoudigerequestsmethodologie}
 
 Uit de eerdere uitleg over de implementatie van de TestHelper klasse zal al enigzins duidelijk geworden zijn hoe de performantie testen gaan verlopen.
 Er wordt gestart met de performantie te evalueren van enkelvoudige requests voor welbepaalde sets van data voor alle geïmplementeerde API calls.
@@ -203,8 +269,9 @@ De API calls die zullen worden uitgevoerd:
     \item gRPC getPeopleStream
 \end{itemize}
 
-Tabel~\ref{tab:Gevraagdedatasets} geeft de datasets weer die opgevraagd zullen worden, hiervoor werd reeds gekeken wat hun grootte is
-wanneer ze in JSON formaat naar een bestand worden weggeschreven (deze grootte kan zeer kleine verschillen vertonen welke nagenoeg geen impact zullen hebben op de performantie):\\
+Tabel~\ref{tab:Gevraagdedatasets} geeft de datasets weer die zullen opgevraagd worden, hiervoor werd reeds gekeken wat hun grootte is
+wanneer ze in JSON formaat naar een bestand worden weggeschreven (deze grootte kan zeer kleine verschillen vertonen welke nagenoeg geen impact zullen hebben op de performantie).
+Alle datasets zullen vier maal opgevraagd worden waarna het gemiddelde van deze vier tijdsverlopen genomen wordt om de verschillende soorten API calls te gaan vergelijken.\\
 
 \begin{table}
     \centering
@@ -248,7 +315,9 @@ wanneer ze in JSON formaat naar een bestand worden weggeschreven (deze grootte k
 Voor de 2 REST calls en de getPeople functie van het gRPC API is het simpelweg bovenstaande lijst door te geven aan de testPerformance\_singularRequests methode
 van de TestHelper. De getPeopleStream methode van het gRPC API geeft een object van het type Multi terug, waarover eerder reeds meer informatie werd gegeven.
 Om deze methode te testen is er een nieuwe functie gemaakt welke door middel van een AtomicInteger de tel bijhoudt van alle ontvangen items en bij het voltooien van
-de gRPC functie een AtomicBoolean op true zet. Wanneer die AtomicBoolean op true staat wordt de controle teruggegeven aan de TestHelper die zo de tijdsduur kan registreren.\\
+de gRPC functie een AtomicBoolean op true zet. Wanneer die AtomicBoolean op true staat wordt de controle teruggegeven aan de TestHelper. Hieruit bleek dat effectief
+alle gevraagde items ontvangen werden. Om een correcte performantiemeting te kunnen doen dient de AtomicInteger terug verwijderd te worden gezien deze de metingen
+negatief be\"{\i}nvloedt\"\\. De AtomicBoolean wordt enkel en slechts eenmaal opgeroepen wanneer de oproep voltooid is waardoor de impact hiervan nagenoeg geen impact zal hebben.
 
 \section{Meervoudige requests}
 
@@ -261,12 +330,15 @@ en tot slot ook de grootte van de gehele lijst.\\
 
 Praktisch wordt hier de testPerformance\_multipleRequests van de TestHelper klasse aangeroepen voor alle REST API calls en de getPeople functie van het gRPC API.
 Het tijdsverloop van alle calls, met de opgegeven batch grootte, tot de gehele dataset ontvangen is, zal worden geregistreed. Eerst zullen verschillende batch groottes
-uitgestest worden om te evalueren wat de impact van deze grootte is op de performantie. Een grote batch heeft immers tot gevolg dat er minder calls zullen moeten uitgevoerd worden.
-Wanneer er een zicht is op de meest performante batch grootte per API call zullen weer, zoals in de enkelvoudige requests, dataset van vari\"erende grootte opgevraagd
-worden om het performantieimpact daarvan te beschouwen.\\
-
+uitgetest worden om te evalueren wat de impact van deze grootte is op de performantie. Een grote batch heeft immers tot gevolg dat er minder calls zullen moeten uitgevoerd worden.\newline
 Tabel ~\ref{tab:Batches} geeft aan welke batches zullen worden gebruikt. Het totale aantal items die worden opgevraagd bedraagd 4.194.304 welke een grootte hebben
-van 347,68 mb wanneer ze zijn weggeschreven in JSON formaat naar een bestand.\\
+van 347,68 mb wanneer ze zijn weggeschreven in JSON formaat naar een bestand. De hoogste snelheid waarmee deze grote dataset , door middel van batched calls, kon worden
+opgehaald zal dan vergeleken worden tussen de verschillende API's en verschillende formaten of methodes\\
+
+getPeopleStream van het gRPC API is hier weer het vreemde eendje waarbij het pagineren van de calls zinloos is. De server zal immers de beschikbare capaciteit gebruiken
+om item per item door te sturen, gebruik makend van de HTTP2 functionaliteit, zolang de client niet blokkeert. Voor getPeopleStream zal de testPerformance\_singularRequests methode van
+de TestHelper klasse gebruikt worden voor de totale grootte die ook bij de andere API calls wordt opgevraagd.
+De performantie hiervan kan dan correct vergeleken worden met de andere resultaten.\\
 
 \begin{table}
     \centering
@@ -307,9 +379,13 @@ van 347,68 mb wanneer ze zijn weggeschreven in JSON formaat naar een bestand.\\
     \label{tab:Batches}
 \end{table}
 
-getPeopleStream van het gRPC API is hier weer het vreemde eendje waarbij het pagineren van de calls zinloos is. De server zal immers de beschikbare capaciteit gebruiken
-om item per item door te sturen, gebruik makend van de HTTP 2 functionaliteit, zolang de client niet blokkeert. Voor getPeopleStream zal de testPerformance\_singularRequests methode van
-de TestHelper klasse gebruikt worden voor de totale grootte die ook bij de andere API calls wordt opgevraagd. Deze performantie kan dan correct vergeleken worden met de andere resultaten.
+\section{Reproduceren}
+Alle testen die in deze methodiek beschreven zijn kunnen gereproduceerd worden met behulp van de beschreven server en client applicaties.\\
+Zoals eerder aangegeven is de broncode terug te vinden is op de publieke GIT repository op Github via https://github.com/thiersnicolas/gRPC\_vs\_REST.git.
+De server applicatie is op heden gedeployed op OpenShift en zal maar tijdelijk beschikbaar blijven voor de duur van dit onderzoek.
+Deze applicatie kan echter gemakkelijk opnieuw gedeployed worden op OpenShift dankzij de uitleg in sectie ~\ref{sec:opzet} onder paragraaf Server applicatie.
+Voor andere cloud omgeving kan het zijn dat er bijkomende aanpassingen nodig zijn aan de broncode.\\
+De client applicatie kan gewoon lokaal gebruikt worden door de gemaakte testen op te starten. Deze zullen .txt bestanden genereren welke de metingen bevatten.
 
 
 

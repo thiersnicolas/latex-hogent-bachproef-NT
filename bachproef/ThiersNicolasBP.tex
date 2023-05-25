@@ -125,7 +125,7 @@
 \input{inleiding}
 \input{standvanzaken}
 \input{methodologie}
-\input{bevindingen}
+\input{conclusie}
 
 % Voeg hier je eigen hoofdstukken toe die de ``corpus'' van je bachelorproef
 % vormen. De structuur en titels hangen af van je eigen onderzoek. Je kan bv.
@@ -135,8 +135,6 @@
 %\input{...}
 %...
 
-\input{conclusie}
-
 %---------- Bijlagen -----------------------------------------------------------
 
 \appendix
@@ -145,10 +143,21 @@
 
 Het onderwerp van deze bachelorproef is gebaseerd op een onderzoeksvoorstel dat vooraf werd beoordeeld door de promotor. Dat voorstel is opgenomen in deze bijlage.
 
-%% TODO: 
-%\section*{Samenvatting}
+\section*{Samenvatting}
 
-% Kopieer en plak hier de samenvatting (abstract) van je onderzoeksvoorstel.
+In dit onderzoek wordt het performantie verschil tussen een REST API en een gRPC API beschouwd bij het versturen van datasets van variërende grootte.
+Beide technologieën zijn API's en daarmee helpen zij de communicatie tussen twee applicaties te faciliteren.
+Wanneer de verschillen tussen de API's bekeken worden vallen enkele punten extra in de kijker.
+Zo gebruikt REST het HTTP 1.1 protocol, t.o.v. gRPC dat via het performantere HTTP 2 communiceert.
+gRPC serialiseert daarnaast nog eens alle data d.m.v. protocol buffers waardoor het, op vlak van performantie, duidelijk een overwicht verkrijgt t.a.v. REST.
+Desalniettemin is het gebruik van REST wijdverspreid en kan de implementatie van een dergelijk API voor de client zeer vlot en onafhankelijk van de specifieke
+implementatie of gebruikte technologieën van de server verlopen. Elke ontwikkelaar of applicatie-architect dient dan ook te evalueren of het specifieke gebruik
+van de applicatie pure performantie vooropstelt t.o.v. andere noden. Wat het effectieve performantie verschil is tussen een REST API en een gRPC API voor
+datasets van variërende grootte kan een deel van de puzzel aanbrengen.
+Voor het onderzoek worden 2 applicaties, client en provider, in Java programmeertaal geschreven.
+Beide applicaties krijgen 2 rest implementaties, één dat zich toespitst op performantie terwijl de tweede het meer gangbare gebruik weerspiegelt,
+en 1 gRPC implementatie. Tussen deze 2 applicaties, welke op AWS gehost worden, worden, per implementatie, datasets van variërende grootte
+verzonden waarbij het tijdsverloop geregistreerd wordt.
 
 % Verwijzing naar het bestand met de inhoud van het onderzoeksvoorstel
 \input{../voorstel/voorstel-inhoud}
