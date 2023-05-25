@@ -37,7 +37,7 @@ Hierdoor zou er sneller moeten gestart kunnen worden met wat echt het achterligg
 OpenShift heeft ook een administrator en developer view, waarbij vooral de developer view het gemakkelijk maakt om applicaties te gaan deployen
 zonder de interne werken van Kubernetes door-en-door te moeten kennen.
 Tot slot biedt Red Hat een gratis sandbox aan om een maand lang mee te werken. Verder in de tekst wordt met OpenShift of Kubernetes beiden gerefereerd naar de deploy omgeving,
-omdat OpenShift uiteindelijk ook gewoon Kubernetes is.
+omdat OpenShift uiteindelijk ook gewoon Kubernetes is.\newline
 ~\autocite{redhatwhatiskubernetes}
 
 %TODO add link https://www.redhat.com/en/engage/rh-openshift-kubernetes-s-202102241206?sc_cid=7013a0000026OShAAM&gad=1&gclid=EAIaIQobChMIk4qdpe2P_wIVroCDBx26lAaCEAAYASAAEgLLOvD_BwE&gclsrc=aw.ds
@@ -113,9 +113,9 @@ Een @GET annotatie wijst aan welke HTTP method naar deze methode geleid moet wor
 voor het endpoint zonder compressie en application/octet-stream voor het endpoint voorzien van compressie.
 Quarkus zal deze serialisatie automatisch verzorgen. Tot slot annoteren we de method met @Uncompressed om zeker te zijn dat Quarkus zelf hier zeker geen compressie zal toepassen.
 Een tweede GET endpoint ''/people5/\{amount\}/compressed'' met dezelfde werking, maar waarbij de data wordt gecomprimeerd alvorens ze wordt verzonden,
-wordt met de people5compressed methode gedefinie\"rd. Tijdens het implementeren van beide applicaties bleek Quarkus, ondanks het volgen van de tutorial~\parencite{quarkusgzipcompressie}
-en een oplossing van een GitHub discussie ~\parencite{quarkusgzipcompressiegithub} uit te proberen, de compressie niet uit te voeren.
-Hierdoor is er gekozen de gzip compressie simpelweg zelf te implementeren middels een gzip methode welke grotendeels gebaseerd is op een gevonden voorbeeld~\parencite{gzipCompressie}.
+wordt met de people5compressed methode gedefinie\"rd. Tijdens het implementeren van beide applicaties bleek Quarkus, ondanks het volgen van de tutorial van Quarkus~\parencite{quarkusgzipcompressie}
+en een oplossing van een GitHub discussie~\parencite{quarkusgzipcompressiegithub} uit te proberen, de compressie niet uit te voeren.
+Hierdoor is er gekozen de gzip compressie simpelweg zelf te implementeren middels een gzip methode welke grotendeels gebaseerd is op een gevonden voorbeeld van java2s~\parencite{gzipCompressie}.
 Deze methode aanvaard een Lijst van generieke objecten en geeft een byte array terug welke de gecomprimeerde data bevat.
 Voor beiden wordt de hoeveelheid objecten die geretourneerd moeten worden, aangegeven met een path variabele welke in het URI wordt geplaatst.
 Boven elke methode, die overeenkomen met een endpoint, wordt nogmaals een @Path annotatie voorzien die het specifiek voor dat endpoint nodige deel van de url meekrijgt als value.
@@ -200,7 +200,7 @@ nog een @Path annotatie met ´''/cleardata'' als value die de url verder specifi
 als value heeft. Deze methode heeft ook een parameter amount welke ook voorzien wordt van een @PathParam annotatie met ''amount'' als value zodat Quarkus
 deze parameter als path parameter zal gebruiken. De derde methode people5Compressed is buiten de naam identiek als de people5 methode maar hier gaat het endpoint een
 byte array ontvangen wat aangegeven wordt door de @Consumes annotatie voorzien van ''application/octet-stream''. Het omzetten van de byte array naar de java objecten gebeurt
-in de test klasse, door middel van de methode gzipDecompressBytes, welke een byte array ontvangt en een lijst van generieke objecten teruggeeft,
+in de test klasse, door middel van de methode gzipDecompressBytes, die gebaseerd is op een simpel voorbeeld van java2s~\parencite{gzipDecompressie}, welke een byte array ontvangt en een lijst van generieke objecten teruggeeft,
 en zal nog mee onderdeel zijn van performantiemetingen, ze wordt dus uitgevoerd alvorens het ontvangen van de data geregistreerd wordt in de TestHelper klasse.
 ~\autocite{quarkusRESTclient}\\
 
@@ -224,8 +224,8 @@ De clearData en de getPeople methode hebben beiden de wrapper klasse ''io.smallr
 SupportedAmount en GrpcPeople5, deze laatste bevat een lijst met GrpcPerson5 objecten. De getPeopleStream methode daarentegen geeft een ''io.smallrye.mutiny.Multi'' terug.
 Zowel Uni als Multi representeren een stream en zijn asynchrone types. Uni omvat slechts \'e\'en item of een fout. Multi omvat 0 tot potentieel oneindig veel items.
 Voor Uni zal er gewoon op het item gewacht worden tot dit ontvangen is. Voor een Multi zal er gesubscribed worden en zullen er drie functies nodig zijn om
-de items te verwerken. De eerste functie, van het type ~\parencite{Consumer}, gaat elk item verwerken, de tweede functie, weer het type ~\parencite{Consumer},
-gaat eventuele failures verwerken en de derde functie, van het type ~\parencite{Runnable} wordt aangeroepen wanneer de call voltooid is.\newline
+de items te verwerken. De eerste functie, van het type Consumer~\parencite{Consumer}, gaat elk item verwerken, de tweede functie, weer het type Consumer~\parencite{Consumer},
+gaat eventuele failures verwerken en de derde functie, van het type Runnable~\parencite{Runnable} wordt aangeroepen wanneer de call voltooid is.\newline
 
 %+++ gRPC Quarkus properties en SSL configuratie uitleg +++
 %+++ implementatie van gRPC duurde veel langer door de opzet van de omgeving, bij gRPC is TSL ingebakken in de applicatie en niet enkel een probleem voor de infrastructuur
@@ -250,6 +250,10 @@ De tweede methode testPerformance\_multipleRequests verwacht ook de testnaam, ee
 Tijdens het uitvoeren van deze method zullen de opgegeven aantallen opgehaald worden door middel van de API call meermaals uit te voeren met de batchSize als aantal
 tot het totale gevraagd aantal is ontvangen. Ook hier wordt de tijd geregistreerd, maar dan van het ophalen van het volledige aantal d.m.v.
 verschillende calls van de opgegeven batch grootte.\\
+
+De hele opzet in deze methodiek kan een effect hebben op de resultaten die zullen bekomen worden. Het wijzigen ervan zal dus kunnen maken dat de resultaten afwijken.
+Bij het beschouwen van de hierbij geregistreerde performantieverschillen moet daar rekening mee gehouden worden. Grote verschillen en verhouding tussen resultaten zullen echter
+ook na aanpassing van de testmodaliteiten gelijkaardig blijven, waardoor het nog mogelijk zal zijn conclusie te maken en voordeel te halen uit dit onderzoek.\\
 
 De broncode van dit project, dat zowel de server als client applicatie omvat, is publiek beschikbaar op Github via https://github.com/thiersnicolas/gRPC\_vs\_REST.git
 

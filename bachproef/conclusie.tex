@@ -446,7 +446,12 @@ application\_client/infrastructure/dataproviders/dataproviders-grpc/src/test/res
 
 \paragraph{Enkelvoudige requests}
 De resultaten van de performantiemetingen tijdens de enkelvoudige requests bevestigen deels wat de stand van zaken reed deed vermoeden nl. een gRPC API is out of the box
-meer performant dan een standaard REST API
+meer performant dan een standaard REST API. De cijfers die hier naar boven komen in tabel\ref{tab:REST_RESTcompressie_gRPCUni_gRPCMultipercentage} m.b.t.
+het hier ge\"{\i}mplementeerde REST API met JSON zonder compressie en het gRPC API met Unary methode wijzen, bij heel kleine datasets van maximum enkele honderd bytes, erop dat gRPC
+daarbij ongeveer dubbel zo snel is. Bij iets grotere datasets tot de limiet getest in dit onderzoek, welke 43,46MB bedraagt, stijgt dit verschil tot 3,5 keer.
+De grafiek in figuur~\ref{fig:RESTRESTcompressiegRPCUnigRPCMulti} toont ook heel duidelijk aan dat het standaard REST API met JSON het minst performant is.\\
+In een gRPC API wordt de data reeds standaard gecomprimeerd. Bij een REST API is dit echter ook een optie, zo werd reeds in de stand van zaken naar voor gebracht. Wanneer er
+in tabel\ref{tab:REST_RESTcompressie_gRPCUni_gRPCMultipercentage} de verhouding tussen het REST API met JSON maar ditmaal met gebruik van
 
 
 Uit de literatuurstudie zou afgeleid kunnen worden dat gRPC over de hele lijn sneller zal zijn dan REST. Zelfs indien de REST API zo performant mogelijk

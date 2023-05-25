@@ -321,8 +321,8 @@ die naar voor gekomen zijn:
 
 gRPC wordt steeds populairder dankzij de opkomst van microservices. Dit zijn services die onafhankelijk van elkaar worden gebouwd en ge\"{\i}mplementeerd om
 zo tot een gehele toepassing te komen. Bij een fout in \'e\'en van de services zal dit normaliter enkel de delen van de applicatie verstoren die in aanraking komen
-met het deel dat een fout geeft, niet ge\"{\i}mpacteerde services blijven normaal functioneren en dus is niet de hele app verstoord.Bij een monoliet, dit is \"e\"en grote applicate,
-kan een kleine fout de hele app breken. Om microservicesgoed met elkaar te kunnen communiceren zijn er dus goed gedefinieerde API-contracten nodig.\newline
+met het deel dat een fout geeft, niet ge\"{\i}mpacteerde services blijven normaal functioneren en dus is niet de hele app verstoord. Bij een monoliet, dit is \"e\"en grote applicate,
+kan een kleine fout de hele applicatie breken. Om microservices foutloos met elkaar te laten communiceren zijn er goed gedefinieerde API-contracten nodig.\newline
 ~\autocite{microsoft}\\
 
 Dankzij de eerder vermelde multiplexing kunnen meerdere dingen tegelijk gebeuren, meerdere requests tegelijk worden verzonden, bij \'e\'en enkele connectie.
@@ -362,7 +362,11 @@ Protobug gaat verder dan JSON en is eerder een mechanisme voor het serialiseren 
 JSON is leesbaar voor mensen terwijl het binaire formaat bij Protobuf dat niet is~\parencite{json}
 Bij deze protocol buffers wordt de datastructuur \'e\'enmaal vastgelegd en gaat de gegenereerde code van gRPC de serialisatie en deserialisatie van de data verzorgen.
 Dit serialisatieproces zorgt dat data compact gemaakt wordt voordat ze wordt verzonden wat een performantiewinst zou betekenen.\newline
+REST API's hebben echter ook de mogelijkheid om JSON geformateerde data performanter te verzenden. Dankzij de ''Accept-Encoding'' header kan een REST client aangeven
+dat de data gecomprimeerd mag worden en met behulp van welk algoritme. De twee standaard waarden voor deze header zijn compress en gzip. Indien de server het aangegeven algoritme
+ook ondersteund kan de data zo verzonden worden, de server zal dit ook aangeven met de ''Content-Encoding'' header.
 ~\autocite{googleprotobufguide}\\
+~\autocite{restcompression}\\
 
 Daar staat wel tegenover dat de data, zoals vermeld, steeds vooraf gedefinieerd dient te worden.
 Het verzenden van dynamische data maakt het voordeel dat bereikt wordt tijdens de serialisatie namelijk ongedaan.\\
