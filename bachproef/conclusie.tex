@@ -304,6 +304,10 @@ als percentage weergegeven t.o.v. het tijdsverloop van de meest performante gemi
 
 
 \paragraph{Meervoudige requests}
+
+De verschillende API's halen hier 4.194.304 items op, via meervoudige calls, welke samen een grootte hebben van 347,68 MB. De grootte van de dataset van de individuele calls
+is een variabele.
+
 \textbf{REST - geen compressie}\newline
 De resultaten van de performantiemetingen van de meervoudige requests met vari\"erende batch grootte voor REST zonder compressie zijn terug te vinden in tabel~\ref{tab:RESTmeervoudig}.
 
@@ -436,11 +440,28 @@ Tot slot is het resultaat van de performantiemeting van de enkelvoudige stream r
 welke een object van het type Multi, en dus een stream teruggeeft, dat de hele 4.194.304 items werden ontvangen door de client 73.964 millies of 73,964 seconden
 na het aanroepen van de gRPC functie.\\
 
+\begin{table}
+    \centering
+    \begin{tabular}{lllll}
+        \toprule
+        \textbf{} & \textbf{REST} & \textbf{REST gecomprimeerd} & \textbf{gRPC Uni} & \textbf{gRPC Multi} \\
+        \midrule
+        tijdverloop (s) & 214,471 & 59,063 & 65,201 & 73,964 \\
+        percentage & 363,12\% & \textbf{100,00\%} & 110,39\% & 125,23\% \\
+        \bottomrule
+    \end{tabular}
+    \caption{Percentage tijdsverloop t.o.v. de performantste meting voor de het versturen van }
+    \label{tab:REST_RESTgecomprimeerd_gRPCUni_gRPCmultimeervoudig}
+\end{table}
+
+
 \textbf{Logs performantiemetingen}\newline
 Alle logs die geleid hebben tot de resultaten die in dit onderzoek zijn voorgesteld, alsook de excel bestanden waarin de resultaten zijn verwerkt en de grafieken gecre\"eerd,
-zijn terug te vinden op de reeds vermelde publieke GIT repository op GITHUB via https://github.com/thiersnicolas/gRPC\_vs\_REST in de folder
-application\_client/infrastructure/dataproviders/dataproviders-rest/src/test/resources/final voor alle documenten met betrekking tot de REST API en in de folder
-application\_client/infrastructure/dataproviders/dataproviders-grpc/src/test/resources/final voor alle documenten met betrekking tot de gRPC API.\\
+zijn terug te vinden op de reeds vermelde publieke GIT repository op GITHUB via https://github.com/thiersnicolas/gRPC\_vs\_REST in volgende folders.\newline
+Voor alle documenten met betrekking tot het REST API:\newline
+application\_client/infrastructure/dataproviders/dataproviders-rest/src/test/resources/final\newline
+Voor alle documenten met betrekking tot de gRPC API.\newline
+application\_client/infrastructure/dataproviders/dataproviders-grpc/src/test/resources/final\\
 
 \section{Conclusie}
 
@@ -451,12 +472,25 @@ het hier ge\"{\i}mplementeerde REST API met JSON zonder compressie en het gRPC A
 daarbij ongeveer dubbel zo snel is. Bij iets grotere datasets tot de limiet getest in dit onderzoek, welke 43,46MB bedraagt, stijgt dit verschil tot 3,5 keer.
 De grafiek in figuur~\ref{fig:RESTRESTcompressiegRPCUnigRPCMulti} toont ook heel duidelijk aan dat het standaard REST API met JSON het minst performant is.\\
 In een gRPC API wordt de data reeds standaard gecomprimeerd. Bij een REST API is dit echter ook een optie, zo werd reeds in de stand van zaken naar voor gebracht. Wanneer er
-in tabel\ref{tab:REST_RESTcompressie_gRPCUni_gRPCMultipercentage} de verhouding tussen het REST API met JSON maar ditmaal met gebruik van
+in tabel\ref{tab:REST_RESTcompressie_gRPCUni_gRPCMultipercentage} naar de verhouding tussen REST gecomprimeerd en gRPC Uni gekeken wordt valt op dat het REST API met gebruik van compressie
+zelfs vaak het meeste performantste is. Het is de moeite waard om nogmaals te melden dat gzip gesupporteerd wordt door nagenoeg alle moderne browsers terwijl dit juist een pijnpunt is voor gRPC.\\
 
+\paragraph{Meervoudige requests}
+De eerdere resultaten bekomen bij de testen van de enkelvoudige requests zijn gelijkaardig aan diegene die hier kunnen vastgesteld worden. Weer is het standaard
+REST API zonder compressie het minst performante. Het ziet er zelfs naar uit dat de verhouding iets groter geworden is. Weer opmerkelijk komt het REST API
+met compressie echter naar boven als meest performante.\\
 
-Uit de literatuurstudie zou afgeleid kunnen worden dat gRPC over de hele lijn sneller zal zijn dan REST. Zelfs indien de REST API zo performant mogelijk
-gemaakt wordt, wat tegen het gebruik ervan ingaat. Het performantie verschil voor datasets met een klein formaat zal waarschijnlijk wel een
-beduidend minder grote impact hebben. Voor applicaties die grote datasets, of zeer frequent data, dienen te versturen kan het performantie verschil echter
-een doorslaggevende factor betekenen. Ondanks het duidelijke resultaat zal dit onderzoek ontwikkelaars en applicatie-architecten toch middelen bieden om
-beter geïnformeerd een keuze te maken tussen een REST-API-implementatie of gRPC. Hierbij zullen zij, afhankelijk van de noden van de te ontwikkelen applicatie
-niet alleen rekening houden met de hier onderzochte performantie maar ook met de andere voor- en nadelen van beide API's.
+Gezien het mogelijk is om een REST API ongeveer even performant te maken als een gRPC API lijkt het bij het overwegen van beide API's voor een nieuwe applicatie
+belangrijk rekening te houden met het gegeven dat gRPC niet ondersteund wordt door browsers. Daar komt bij dat REST zeer wijdverspreid en veelgebruikt is, zoals gebleken
+uit de stand van zaken, en, ondanks dat gRPC in opmars is, het verschil tussen beide technologi\"en op dat vlak groot is. Voor beide API's is het noodzakelijk om
+de client te informeren over de werking, het zgn. contract. Voor REST zijn er op vandaag verschillende mogelijkheden om het API contract bloot te stellen aan clients.
+Voor gRPC komt de moeilijkheid van het delen van het .proto bestand daarentegen aan bod. Tot slot het reeds meermaals herhaalde punt nl. dat browsers REST ondersteunen, en zelfs
+een REST API dat gebruik maakt van compressie, terwijl dit voor gRPC niet het geval is.
+
+\paragraph{Toekomstig onderzoek}
+Om dit onderzoek zo compleet mogelijk te maken werd het gRPC API voorzien van een functie dat een stream doorgeeft.
+De belangstelling hiervoor is snel gedaald zodra bleek dat deze, zelfs bij grotere datasets die niet in één request konden verzonden worden.
+De implementatie was echt eenvoudig zonder dat er bij de server applicatie bepaalde processen vooraf gingen aan het kunnen versturen van de dataset.
+Ook was er geen achterliggen verwerkingsproces bij de client na ontvangst van de data.
+Het lijkt een interessant onderzoeksonderwerp om na te gaan voor welke scenario's een dergelijk streaming API wel de kroon spant en,
+gezien de grotere technische moeilijkheid, hoe de implementatie dan praktisch zou verlopen.

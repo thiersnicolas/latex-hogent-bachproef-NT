@@ -364,9 +364,11 @@ Bij deze protocol buffers wordt de datastructuur \'e\'enmaal vastgelegd en gaat 
 Dit serialisatieproces zorgt dat data compact gemaakt wordt voordat ze wordt verzonden wat een performantiewinst zou betekenen.\newline
 REST API's hebben echter ook de mogelijkheid om JSON geformateerde data performanter te verzenden. Dankzij de ''Accept-Encoding'' header kan een REST client aangeven
 dat de data gecomprimeerd mag worden en met behulp van welk algoritme. De twee standaard waarden voor deze header zijn compress en gzip. Indien de server het aangegeven algoritme
-ook ondersteund kan de data zo verzonden worden, de server zal dit ook aangeven met de ''Content-Encoding'' header.
+ook ondersteund kan de data zo verzonden worden, de server zal dit ook aangeven met de ''Content-Encoding'' header. Een belangrijk gegeven is dat deze gzip compressie door
+nagenoeg alle moderne browsers gesupporteerd wordt.
 ~\autocite{googleprotobufguide}\\
 ~\autocite{restcompression}\\
+~\autocite{gzipBrowerSupport}\\
 
 Daar staat wel tegenover dat de data, zoals vermeld, steeds vooraf gedefinieerd dient te worden.
 Het verzenden van dynamische data maakt het voordeel dat bereikt wordt tijdens de serialisatie namelijk ongedaan.\\
