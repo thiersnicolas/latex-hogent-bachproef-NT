@@ -3,22 +3,8 @@
 
 \nocite{Paper}
 
-% Tip: Begin elk hoofdstuk met een paragraaf inleiding die beschrijft hoe
-% dit hoofdstuk past binnen het geheel van de bachelorproef. Geef in het
-% bijzonder aan wat de link is met het vorige en volgende hoofdstuk.
-
-% Pas na deze inleidende paragraaf komt de eerste sectiehoofding.
-
-%Dit hoofdstuk bevat je literatuurstudie. De inhoud gaat verder op de inleiding, maar zal het onderwerp van de bachelorproef *diepgaand* uitspitten. De bedoeling is dat de lezer na lezing van dit hoofdstuk helemaal op de hoogte is van de huidige stand van zaken (state-of-the-art) in het onderzoeksdomein. Iemand die niet vertrouwd is met het onderwerp, weet nu voldoende om de rest van het verhaal te kunnen volgen, zonder dat die er nog andere informatie moet over opzoeken \autocite{Pollefliet2011}.
-%
-%Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${textcite\{\}}} of \texttt{$\backslash${autocite\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\LaTeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin, gebruik je \texttt{$\backslash${}textcite\{\}}.
-%Soms wil je de auteur niet expliciet vernoemen, dan gebruik je \texttt{$\backslash${}autocite\{\}}. In de volgende paragraaf een voorbeeld van elk.
-%
-%\textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
-
 In dit hoofdstuk wordt eerst bekeken wat een API juist is. De precieze werking van REST alsook van gRPC worden daarna grondig onderzocht met extra aandacht voor
 eventuele aspecten die de performantie kunnen beïnvloeden. Tot slot worden beide technologie\"en ook met elkaar vergeleken.
-
 
 \section{API}
 
@@ -34,25 +20,24 @@ en daarnaast zorgen ze voor een massa aan data die direct bruikbaar is of het po
 
 Het wijdverspreide gebruik van API's, de constante toename van dat gebruik, en zeker ook de toename van de grootte van de data die wordt verzonden, toont
 direct aan dat performantie een zeer belangrijk punt is. Elke softwareontwikkelaar of -architect dient hier rekening mee te houden, en moet het ontwerp van de
-applicatie alsook de keuze voor bepaalde technologie\"en afstemmen op de noden van de applicatie en haar gebruikers.
-~\autocite{cleo}
+applicatie alsook de keuze voor bepaalde technologie\"en afstemmen op de noden van de applicatie en haar gebruikers.\newline
+~\autocite{cleo}\\
 
 REST en RPC zijn beiden API's en meer specifiek web API's in die zin dat ze specificaties zijn die aangeven hoe een connectie tussen twee systemen kan geïmplementeerd worden.
 gRPC daarentegen is een implementatie van Google van de RPC specificatie.\\
 
-Buiten REST en gRPC zijn er nog verschillende vari\"eteiten van web API's welke niet verder aan bod zullen komen in deze scriptie, maar die toch interesssant zijn om
+Buiten REST en gRPC zijn er nog verschillende vari\"eteiten van web API's welke niet verder aan bod zullen komen in deze scriptie, maar die toch interessant zijn om
 te vermelden en kort te vergelijken met de twee welke het onderwerp zijn van dit onderzoek.
 
-~
 
 \paragraph{SOAP}
 Simple Objects Access Protocol ofwel kort SOAP is een web communicatie protocol ontwikkeld voor Microsoft in 1998. Het wordt op vandaag het meeste gebruikt om
-web services aan te bieden data via HTTP of HTTPS(HTTP over TLS of SSL) maar kan ook gebruikt worden bij b.v. FTP en SMTP.
+web services aan te bieden via HTTP of HTTPS(HTTP over TLS of SSL) maar kan ook gebruikt worden bij bv. FTP en SMTP.\newline
 Bij SOAP wordt data, in XML formaat, steeds via een standaard XML schema (XSL) ge\"encodeerd. Zo worden berichten, requests en responses, als volgt gestructureerd:
-Een <soap:Envelope> is het hoofdelement en kan drie sub elementen bevatten nl. <soap:Header>, <soap:Body> en <soap:Fault>. De Header is optionaal maar moet
-als eerste voorkomen binnen de Envelope. Dit element geeft eventuele extra informatie m.b.t. het bericht en kan b.v. de authenticatie gegevens bevatten. Het Body element
-is noodzakelijk en bevat de effectieve data van het bericht, tevens in XML formaat. Het niet verplichte Fault element bevate, ten slotte, gegevens over eventuele errors.\newline
-SOAP zelf legt standaard enkel deze basis structuur op. Wat er verder in de Header of Body elementen wordt geplaats wordt niet bepaald. SOAP werd, door deze lacune, na haar
+Een <soap:Envelope> is het hoofdelement en kan drie sub-elementen bevatten nl. <soap:Header>, <soap:Body> en <soap:Fault>. De Header is optioneel maar moet
+als eerste voorkomen binnen de Envelope. Dit element geeft eventuele extra informatie m.b.t. het bericht en kan bv. de authenticatie gegevens bevatten. Het Body element
+is noodzakelijk en bevat de effectieve data van het bericht, tevens in XML formaat. Het niet verplichte Fault element bevat ten slotte gegevens over eventuele errors.\newline
+SOAP zelf legt standaard enkel deze basis-structuur op. Wat er verder in de Header of Body elementen wordt geplaatst, wordt niet bepaald. SOAP werd, door deze lacune, na haar
 uitgave uitgebreid met een veelvoud van protocollen die in meer detail de werking specifi\"eren. Deze gaan over verschillende onderwerpen zoals beveiliging, transactiebeheer,
 metadata,\ldots. WS-Atomic Transaction is een voorbeeld waarmee aan de ACID (Atomair, Consisitent, Ge\"{\i}soleerd en Duurzaam) regels kan voldaan worden.
 Met behulp van Web Service Description Language of kort WSDL kan, in XML formaat, een schema gedefinieerd worden welke dienen als richtlijn om met een web service te
@@ -142,11 +127,11 @@ Dankzij deze focus en de uniforme manier van werken is het voor een client duide
 
 Afhankelijk van de taal waarin, de tussen server en client, verstuurde data zich bevindt, alsook de programmeertaal van beide applicaties,
 zal er bij zowel de client als de server een serialisatieproces moeten plaatsvinden. Er zijn verschillende libraries die de serialisatie kunnnen verzorgen,
-zo kan er bij Java gebruik gemaakt worden van b.v. Jackson~\parencite{jackson} \newline
+zo kan er bij Java gebruik gemaakt worden van bv. Jackson~\parencite{jackson} \newline
 Bij de client zal gebruik moeten gemaakt van documentatie van de serverapplicatie of door de endpoints manueel aan te roepen
 en zo op basis van de response de mapping voor het serialisatieproces op te maken. Het schrijven van de documentatie,
 het cre\"eren van de code in de client om het REST API van de server aan te roepen en zelfs de code in de server kan automatisch gegenereerd worden dankzij
-handige hulpmiddelen zoals b.v. Swagger~\parencite{swagger}.\\
+handige hulpmiddelen zoals bv. Swagger~\parencite{swagger}.\\
 %TODO JSON vs XML
 Tijdens de levensduur van een API is het bijna onvermijdelijk dat er aanpassingen gebeuren. Sommige van deze aanpassingen, zoals het toevoegen van een extra veld aan een object,
 hebben geen invloed op eventuele clients en worden daarmee non-breaking changes genoemd. Andere aanpassingen, de zogenaamde breaking changes, hebben als gevolg dat er
@@ -200,16 +185,16 @@ alsook dient de client vaak kennis te hebben over die interne werking om de func
 ~\autocite{altexsoft}\\
 
 Google Remote Procedure Calls (gRPC) is de implementatie van Google van het RPC API.\\
-Een eerste groot verschil tussen RPC en de implementatie van Google is dat gRPC gebruik maakt van het HTTP2-transportprotocol.
-HTTP2 werd in 2015 uitgebracht. De doelstellingen bij het ontwikkelen van deze nieuwe versie van het protocol waren vooral toegespitst op performantie.
+Een eerste groot verschil tussen RPC en de implementatie van Google is dat gRPC gebruik maakt van het HTTP 2-transportprotocol.
+HTTP 2 werd in 2015 uitgebracht. De doelstellingen bij het ontwikkelen van deze nieuwe versie van het protocol waren vooral toegespitst op performantie.
 Hierbij werden enkele nieuwe functies en kenmerken ontwikkeld. Request multiplexing laat toe om requests simultaan te laten gebeuren.
 Dankzij Request prioritization kan een prioriteit gegeven worden aan requests. Requests en responses worden nu automatisch gecomprimeerd in tegenselling tot op
 uitdrukkelijk verzoek. De mogelijkheid om de verbinding te resetten werd toegevoegd. Daarenboven kan de server ook proactief resources verzenden naar de
-cache van clients via de zgn. server push functie. En tot slot is HTTP2 een binair protocol t.o.v. het op gewone tekst gebaseerde HTTP1.1 protocol.\newline
+cache van clients via de zgn. server push functie. En tot slot is HTTP 2 een binair protocol t.o.v. het op gewone tekst gebaseerde HTTP 1.1 protocol.\newline
 ~\autocite{baeldung}\\
 
-Het verplicht gebruik van HTTP2 komt echter ook met het nadeel dat gRPC hierdoor niet ondersteund wordt door de hedendaagse browsers. Javascript heeft geen
-volledige controle over HTTP2 waardoor er bepaalde HTTP2 functionaliteit, die nodig is voor gRPC, niet beschikbaar is voor browsers die Javascript gebruiken.
+Het verplicht gebruik van HTTP 2 komt echter ook met het nadeel dat gRPC hierdoor niet ondersteund wordt door de hedendaagse browsers. Javascript heeft geen
+volledige controle over HTTP 2 waardoor er bepaalde HTTP 2 functionaliteit, die nodig is voor gRPC, niet beschikbaar is voor browsers die Javascript gebruiken.
 Voor gRPC moeten er bijvoorbeeld trailing headers blootgesteld worden welke door browser steeds verborgen worden. Een oplossing hiervoor is het gebruik van een proxy welke
 door middel van een normale HTTP request communiceert met de browser en dan de request via gRPC naar de server doorgeeft.\newline
 ~\autocite{altexsoftgrpc}\\
@@ -219,12 +204,12 @@ Het HTTP 2 protocol verplicht het gebruik van encryptie, zoals TLS, niet, ondank
 onder meer met betrekking tot het versienummer, wanneer er toch van encryptie of TLS gebruik wordt gemaakt. TLS staat voor Transport Layer Security en is een protocol
 dat het encrypteren van data die tussen applicaties over het internet verzonden wordt. Door het dataverkeer te encrypteren zijn de verzender en ontvanger zeker dat
 de berichten enkel door hen gelezen kunnen worden alsook dat deze berichten authentiek zijn en van hen afkomstig zijn. TLS wordt voor veel verschillende soorten van internet communicatie gebruikt.
-Ondanks het niet verplichten van encryptie in het HTTP2 protocol wordt TLS in de praktijk toch verplicht wanneer er gebruikt gemaakt wordt van HTTP2.
-Gezien gRPC steeds via het HTTP2 protocol gaat, zal TLS dan eventueel ook moeten voorzien worden bij gRPC API's. Het gebruik van TLS bij gRPC wordt daarenboven aangeraden.
-HTTP2 wordt door de meeste browsers wel gesupporteerd, maar steeds in combinatie met TLS. Het is niet omdat een browser het HTTP2 protocol aanvaard dat daarmee gRPC reeds
+Ondanks het niet verplichten van encryptie in het HTTP 2 protocol wordt TLS in de praktijk toch verplicht wanneer er gebruikt gemaakt wordt van HTTP 2.
+Gezien gRPC steeds via het HTTP 2 protocol gaat, zal TLS dan eventueel ook moeten voorzien worden bij gRPC API's. Het gebruik van TLS bij gRPC wordt daarenboven aangeraden.
+HTTP 2 wordt door de meeste browsers wel gesupporteerd, maar steeds in combinatie met TLS. Het is niet omdat een browser het HTTP 2 protocol aanvaard dat daarmee gRPC reeds
 gesupporteerd wordt.\newline
-TLS heeft een impact op de performantie. Bij TLS moet er een onderhandling gevoerd worden met wat heen en weer communicatie. Bij het HTTP2 protocol ligt dit performantie nadeel,
-dankzij het gebruik van multiplexing, lager dan bij HTTP1.1.
+TLS heeft een impact op de performantie. Bij TLS moet er een onderhandling gevoerd worden met wat heen en weer communicatie. Bij het HTTP 2 protocol ligt dit performantie nadeel,
+dankzij het gebruik van multiplexing, lager dan bij HTTP 1.1.
 Een server moet een SSL/TLS certificaat hebben om deze encryptie te kunnen gebruiken. Dit certificaat zal in eerste instantie toelaten om de identiteit van het systeem
 waarmee een connectie tot stand gebracht wordt te achterhalen en daarna helpen de communicatie over de connectie te encrypteren. Er bestaan zelf gesigneerde certificaten
 en CA certificaten gecre\"eerd en gesigneerd door een Certificate Authority. Een self signed certificate wordt normaal alleen geaccepteerd als dit certificaat of de
@@ -359,7 +344,7 @@ Bij het overlopen van de kenmerken van REST en gRPC komen direct enkele belangri
 Het feit dat REST werkt met het HTTP 1.1 en gRPC met het HTTP 2 protocol heeft ingrijpende gevolgen. HTTP 2 heeft alle mogelijkheden van het 1.1 protocol,
 maar voegt daar de hierboven opgesomde functionaliteiten aan toe (Request multiplexing, Request prioritization, Automatic compressing,
 Server push en haar binaire vorm). Deze bijkomende functionaliteiten zijn voornamelijk toegespitst op een verbetering van de performantie en effici\"entie van dataoverdracht.
-Daarentegen zorgt het gebruik van HTTP2 door gRPC wel voor het nadeel dat er geen rechtstreekse communicatie met browsers mogelijk is.\newline
+Daarentegen zorgt het gebruik van HTTP 2 door gRPC wel voor het nadeel dat er geen rechtstreekse communicatie met browsers mogelijk is.\newline
 ~\autocite{cloudflare}\\
 ~\autocite{tutsplus}\\
 

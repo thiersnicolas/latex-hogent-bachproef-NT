@@ -62,7 +62,7 @@ Er worden 3 endpoints aangeboden in dit REST API die zullen aangeroepen worden t
 personen kan opgevraagd worden. Dit komt overeen met de methode people5 welke voorzien ook voorzien wordt van een @Path annotatie
 die het specifiek voor dat endpoint nodige deel van de url meekrijgt als value nl. ''/\{amount\}''. Amount is hier een path variable. In de variabelen van
 de methode moet amount ook geannoteerd worden met @PathParam met hetzelfde value als in de url om het framework deze te laten doorgeven.
-Dankzij deze path variable worden bijvoorbeeld 5 personen opgevraagd via een GET request door middel van een variabele in de URI te voorzien b.v.
+Dankzij deze path variable worden bijvoorbeeld 5 personen opgevraagd via een GET request door middel van een variabele in de URI te voorzien bv.
 ''people/5'' of ''people/5/compressed''.
 Een @GET annotatie wijst aan welke HTTP method naar deze methode geleid moet worden. @Produces zegt welk media type dit endpoint zal retourneren, hier is dat application/json
 voor het endpoint zonder compressie en application/octet-stream voor het endpoint voorzien van compressie.
@@ -177,7 +177,7 @@ Toen dit opgezet was, konden we beginnen aan de deployment, service en route wra
 Het heeft wat zweet gekost, maar uiteindelijk is gRPC aan de praat gekregen op een online Kuberentes\/OpenShift omgeving.
 De verschillende resource files kunnen teruggevonden worden in application\_server\/configuration/metadata
 
-De server applicatie wordt gedeployed naaar OpenShift van Red Hat. Op OpenShift is HTTP2 en dus ook gRPC connectiviteit steeds met gebruik van TLS protocol.
+De server applicatie wordt gedeployed naaar OpenShift van Red Hat. Op OpenShift is HTTP 2 en dus ook gRPC connectiviteit steeds met gebruik van TLS protocol.
 Gezien het gebruik van TLS bij gRPC ook als best practice gezien wordt, zoals eerder gemeld in de stand van zaken, zal het hier mee onderdeel uitmaken van performantie testen.\newline
 ~\autocite{openshifttls}
 
@@ -332,7 +332,7 @@ van 347,68 MB wanneer ze zijn weggeschreven in JSON formaat naar een bestand. De
 opgehaald zal dan vergeleken worden tussen de verschillende API's en verschillende formaten of methodes\\
 
 getPeopleStream van het gRPC API is hier weer het vreemde eendje waarbij het pagineren van de calls zinloos is. De server zal immers de beschikbare capaciteit gebruiken
-om item per item door te sturen, gebruik makend van de HTTP2 functionaliteit, zolang de client niet blokkeert. Voor getPeopleStream zal de testPerformance\_singularRequests methode van
+om item per item door te sturen, gebruik makend van de HTTP 2 functionaliteit, zolang de client niet blokkeert. Voor getPeopleStream zal de testPerformance\_singularRequests methode van
 de TestHelper klasse gebruikt worden voor de totale grootte die ook bij de andere API calls wordt opgevraagd.
 De performantie hiervan kan dan correct vergeleken worden met de andere resultaten.\\
 

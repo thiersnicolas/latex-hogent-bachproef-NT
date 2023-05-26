@@ -36,16 +36,16 @@
 % De samenvatting in de hoofdtaal van het document
 
 \chapter*{\IfLanguageName{dutch}{Samenvatting}{Abstract}}
-In dit onderzoek wordt het performantie verschil tussen een REST API en een gRPC API beschouwd bij het versturen van datasets van vari\"erende grootte.
+In dit onderzoek wordt het performantieverschil tussen een REST API en een gRPC API beschouwd bij het versturen van datasets van vari\"erende grootte.
 Beide technologie\"en zijn API's en daarmee helpen zij de communicatie tussen twee applicaties via HTTP te faciliteren. gRPC is een tamelijk recente ontwikkeling die
-dankzij een speciaal serialisatie- en compressieproces zeer performant zou moeten zijn. De vraag rijst dan in welke mate het sneller zou zijn dan REST en is het dat
+dankzij een speciaal serialisatie- en compressie proces zeer performant zou moeten zijn. De vraag rijst dan in welke mate het sneller zou zijn dan REST en is het dat
 in alle omstandigheden.\\
 Wanneer de verschillen tussen de beide API's bekeken worden, lopen enkele aspecten extra in de kijker.
-Zo kan bij REST nog steeds het HTTP1.1 protocol gebruikt worden, t.o.v. gRPC dat enkel via het performantere HTTP2 communiceert.
-gRPC gebruikt echter specifieke delen van het HTTP2 protocol waar moderne browsers geen ondersteuning voor bieden
+Zo kan bij REST nog steeds het HTTP 1.1 protocol gebruikt worden, t.o.v. gRPC dat enkel via het performantere HTTP 2 communiceert.
+gRPC gebruikt echter specifieke delen van het HTTP 2 protocol waar moderne browsers geen ondersteuning voor bieden
 waardoor voor dergelijke communicatie een extra proxy moet voorzien worden.
 gRPC serialiseert en comprimeert alle data d.m.v. protocol buffers waardoor het, op vlak van performantie, een overwicht zou verkrijgen t.a.v. REST.
-Bij REST wordt data voornamelijk als JSON verzonden, welk meer uitvoerig is dan de geserialiseerde data via gRPC.
+Bij REST wordt data voornamelijk als JSON verzonden, wat meer uitvoerig is dan de geserialiseerde data via gRPC.
 Er is echter geen verplichting voor een specifiek formaat waardoor bij REST data eventueel ook gecomprimeerd kan worden.
 Er bestaat zelfs een specifieke Header die aangeeft van welk compressiealgoritme gebruikt moet worden.
 In tegenstelling tot gRPC is het gebruik van REST wijdverspreid en zijn er voldoende softwareontwikkelaars met kennis ter zake om een REST API vlot te implementeren.
@@ -54,14 +54,14 @@ Voor REST zijn er reeds veel oplossingen die een API documenteren en eventueel z
 Bij gRP dient er een .proto bestand uitgewisseld te worden tussen server en client waarmee de nodige code door protocol buffers gegenereerd kan worden.
 Over hoe de uitwisseling van dit bestand best dient te verlopen, lijkt nog geen consensus te zijn gevonden.\\
 Elke softwareontwikkelaar of applicatie-architect dient bij de implementatie van een applicatie te evalueren wat de concrete noodzaken
-zijn en te overwegen welke technologie\"en daar het beste een oplossing voor bieden. Deze overwegng kan enkel gemaakt worden met kennis van zaken. Performantie is
+zijn en te overwegen welke technologie\"en daar het beste een oplossing voor bieden. Deze overweging kan enkel gemaakt worden met kennis van zaken. Performantie is
 steeds een belangrijk en vaak een doorslaggevende factor.
 Het onderwerp van deze scriptie, wat het effectieve performantie verschil is tussen een REST API en een gRPC API voor
 datasets van variërende grootte, kan een deel van de puzzel aanbrengen. Zeker aangevuld met de vergelijkende studie in de stand van zaken in dit onderzoek.\\
 Voor het onderzoek worden 2 applicaties, client en provider, in Java programmeertaal geschreven, met behulp van het Quarkus framework.
 Beide applicaties krijgen 2 rest implementaties, één dat data als JSON verzendt en het andere data met behulp van gzip zal comprimeren alvorens te verzenden.
 Ook zijn er 2 gRPC implementaties, het eerste zal de te verzenden data met protocol buffers serialiseren en daarna verzenden en het tweede,
-ten volle gebruik makend van HTTP2 functionaliteit, geeft de geserialiseerde data middels een stream door.
+ten volle gebruik makend van HTTP 2 functionaliteit, geeft de geserialiseerde data middels een stream door.
 De server applicatie zal gehost worden op OpenShift van RedHat terwijl de client applicatie deze vanop een pc aanspreekt.
 Tijdens de performantie-testen wordt het tijdsverloop geregistreerd bij aanvang van het aanroepen van de server door de client
 tot de gevraagde data bij de client toekomt en gedeserialiseerd is. Dit proces wordt voor verschillende datasets herhaald.
