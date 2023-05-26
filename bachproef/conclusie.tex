@@ -5,24 +5,15 @@
 \chapter{Conclusie}%
 \label{ch:conclusie}
 
-% TODO: Trek een duidelijke conclusie, in de vorm van een antwoord op de
-% onderzoeksvra(a)g(en). Wat was jouw bijdrage aan het onderzoeksdomein en
-% hoe biedt dit meerwaarde aan het vakgebied/doelgroep?
-% Reflecteer kritisch over het resultaat. In Engelse teksten wordt deze sectie
-% ``Discussion'' genoemd. Had je deze uitkomst verwacht? Zijn er zaken die nog
-% niet duidelijk zijn?
-% Heeft het onderzoek geleid tot nieuwe vragen die uitnodigen tot verder
-%onderzoek?
-
 \section{Bevindingen}
 \paragraph{Enkelvoudige requests}
 \textbf{REST - geen compressie}\newline
 Zoals in hoofdstuk~\ref{ch:methodologie} voorgesteld werden de performantie testen voor de enkelvoudige requests, voor de voorgestelde dataset,
-vier maal uitgevoerd en werd daarvan het gemiddelde genomen. Het resultaat is terug te vinden in tabel~\ref{tab:RESTenkelvoudig}.
+viermaal uitgevoerd en werd daarvan het gemiddelde genomen. Het resultaat is terug te vinden in tabel~\ref{tab:RESTenkelvoudig}.
 Elke lijn op deze tabel komt overeen met een uitgevoerde request. In de eerste kolom worden het aantal items die werden opgevraagd weergegeven,
 in de tweede kolom de grootte van de dataset, in MB, wanneer ze in JSON formaat naar een file worden weggeschreven,
-daarna het tijdsverloop tussen de start van de request en het verkrijgen van de opgevraagde data in millie seconden. De laatste kolom geeft de de grootte van de
-verzonden dataset, in MB, per seconde dat de request geduurd heeft.
+daarna het tijdsverloop tussen de start van de request en het verkrijgen van de opgevraagde data in millieseconden. De laatste kolom geeft de de grootte van de
+verzonden dataset, in MB, per seconde dat de request heeft geduurd.
 Op figuur~\ref{fig:RESTenkelvoudig} wordt de snelheid, in MB/sec, weergegeven ten opzichte van de grootte van de verzonden dataset voor de vier sets van
 calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortschrijdend gemiddelde over 3 metingen.\\
 
@@ -78,8 +69,8 @@ calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortsch
 \end{figure}
 
 \textbf{REST - met compressie}\newline
-Het gemiddelde van de performantiemeting van de enkelvoudige requests met het REST API waarbij de data door de server gecomprimeerd werd alvorens te verzenden
-en bij de client weer gedecomprimeerd is terug te vinden in tabel~\ref{tab:RESTcompressieenkelvoudig}
+De gemiddelden van de performantiemetingen van de enkelvoudige requests met het REST API waarbij de data door de server gecomprimeerd werd alvorens te verzenden
+en bij de client weer is gedecomprimeerd, is terug te vinden in tabel~\ref{tab:RESTcompressieenkelvoudig}
 Op figuur~\ref{fig:RESTcompressieenkelvoudig} wordt de snelheid, in MB/sec, weergegeven ten opzichte van de grootte van de verzonden dataset voor de vier sets van
 calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortschrijdend gemiddelde over 3 metingen.\\
 
@@ -136,12 +127,12 @@ calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortsch
 \end{figure}
 
 \textbf{gRPC - Uni}\newline
-Het gemiddelde van de performantiemeting van de enkelvoudige requests met de gRPC API functie getPeople, welke een object van het type Uni teruggeeft, zijn
+De gemiddelden van de performantiemeting van de enkelvoudige requests met de gRPC API functie getPeople, welke een object van het type Uni teruggeeft, zijn
 terug te vinden in tabel~\ref{tab:gRPCUnienkelvoudig}
 Op figuur~\ref{fig:RESTcompressieenkelvoudig} wordt de snelheid in MB/sec weergegeven ten opzichte van de grootte van de verzonden dataset voor de vier sets van
-calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortschrijdend gemiddelde over 3 metingen.\\
+calls die uitgevoerd werden. Tevens werden trendlijnen voorzien volgens voortschrijdend gemiddelde over 3 metingen.\\
 Op figuur~\ref{fig:gRPCUnienkelvoudig} wordt de snelheid, in MB/sec, weergegeven ten opzichte van de grootte van de verzonden dataset voor de vier sets van
-calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortschrijdend gemiddelde over 3 metingen.\\
+calls die uitgevoerd werden. Ook hier werden trendlijnen voorzien volgens voortschrijdend gemiddelde over 3 metingen.\\
 
 \begin{table}
     \centering
@@ -196,10 +187,10 @@ calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortsch
 \end{figure}
 
 \textbf{gRPC - Multi}\newline
-Het gemiddelde van de performantiemeting van de enkelvoudige requests met de gRPC API functie getPeopleStream, welke een object van het type Multi, en daarmee een stream
+De gemiddelden van de performantiemetingen van de enkelvoudige requests met de gRPC API functie getPeopleStream, welke een object van het type Multi is, en daarmee een stream
 teruggeeft, zijn terug te vinden in tabel~\ref{tab:gRPCMultienkelvoudig}
 Op figuur~\ref{fig:gRPCMultienkelvoudig} wordt de snelheid in MB/sec weergegeven ten opzichte van de grootte van de verzonden dataset voor de vier sets van
-calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortschrijdend gemiddelde over 3 metingen.\\
+calls die uitgevoerd werden. Tevens werden trendlijnen voorzien volgens voortschrijdend gemiddelde over 3 metingen.\\
 
 \begin{table}
     \centering
@@ -252,7 +243,7 @@ calls die uitgevoerd werden, tevens werden trendlijnen voorzien volgens voortsch
     \label{fig:gRPCMultienkelvoudig}
 \end{figure}
 
-Tot slot worden de gemiddelde waarden, over de vier sets van calls, voor de vier verschillende types van call samen in een grafiek geplaatst
+Tot slot worden de gemiddelde waarden, over de vier sets van calls, voor de vier verschillende types van call, samen in een grafiek geplaatst
 welke wordt weergegeven in figuur~\ref{fig:RESTRESTcompressiegRPCUnigRPCMulti} alsook worden de gemiddelde tijdsduur per dataset per type call
 als percentage weergegeven t.o.v. het tijdsverloop van de meest performante gemiddelde waarde in tabel~\ref{tab:REST_RESTcompressie_gRPCUni_gRPCMultipercentage}\\
 \begin{figure}[ht]
@@ -309,7 +300,7 @@ De verschillende API's halen hier 4.194.304 items op, via meervoudige calls, wel
 is een variabele.
 
 \textbf{REST - geen compressie}\newline
-De resultaten van de performantiemetingen van de meervoudige requests met vari\"erende batch grootte voor REST zonder compressie zijn terug te vinden in tabel~\ref{tab:RESTmeervoudig}.
+De resultaten van de performantiemetingen van de meervoudige requests met vari\"erende batch grootte voor REST zonder compressie zijn weergegeven in tabel~\ref{tab:RESTmeervoudig}.
 
 \begin{table}
     \centering
@@ -351,7 +342,7 @@ De resultaten van de performantiemetingen van de meervoudige requests met vari\"
 \end{table}
 
 \textbf{REST - geen compressie}\newline
-De resultaten van de performantiemetingen van de meervoudige requests met vari\"erende batch grootte voor REST zonder compressie zijn terug te vinden in tabel~\ref{tab:RESTcompressiemeervoudig}.
+De resultaten van de performantiemetingen van de meervoudige requests met vari\"erende batch grootte voor REST zonder compressie zijn weergegeven in tabel~\ref{tab:RESTcompressiemeervoudig}.
 
 \begin{table}
     \centering
@@ -394,7 +385,7 @@ De resultaten van de performantiemetingen van de meervoudige requests met vari\"
 
 \textbf{gRPC Uni}\newline
 De resultaten van de performantiemetingen van de meervoudige requests met vari\"erende batch grootte voor gRPC API functie getPeople, welke een object van het type Uni teruggeeft, zijn
-terug te vinden in tabel~\ref{tab:gRPCUnimeervoudig}.
+weergegeven in tabel~\ref{tab:gRPCUnimeervoudig}.
 
 \begin{table}
     \centering
@@ -436,8 +427,8 @@ terug te vinden in tabel~\ref{tab:gRPCUnimeervoudig}.
 \end{table}
 
 \textbf{gRPC Multi}\newline
-Tot slot is het resultaat van de performantiemeting van de enkelvoudige stream requests voor gRPC API functie getPeopleStream,
-welke een object van het type Multi, en dus een stream teruggeeft, dat de hele 4.194.304 items werden ontvangen door de client 73.964 millies of 73,964 seconden
+Tot slot het resultaat van de performantiemeting van de enkelvoudige stream requests voor gRPC API functie getPeopleStream,
+welke een object van het type Multi is, en dus een stream teruggeeft. Alle 4.194.304 items werden ontvangen door de client in 73.964 milliseconden of 73,964 seconden
 na het aanroepen van de gRPC functie.\\
 
 \begin{table}
@@ -460,37 +451,37 @@ Alle logs die geleid hebben tot de resultaten die in dit onderzoek zijn voorgest
 zijn terug te vinden op de reeds vermelde publieke GIT repository op GITHUB via https://github.com/thiersnicolas/gRPC\_vs\_REST in volgende folders.\newline
 Voor alle documenten met betrekking tot het REST API:\newline
 application\_client/infrastructure/dataproviders/dataproviders-rest/src/test/resources/final\newline
-Voor alle documenten met betrekking tot de gRPC API.\newline
+Voor alle documenten met betrekking tot de gRPC API:\newline
 application\_client/infrastructure/dataproviders/dataproviders-grpc/src/test/resources/final\\
 
 \section{Conclusie}
 
 \paragraph{Enkelvoudige requests}
-De resultaten van de performantiemetingen tijdens de enkelvoudige requests bevestigen deels wat de stand van zaken reed deed vermoeden nl. een gRPC API is out of the box
+De resultaten van de performantie metingen tijdens de enkelvoudige requests bevestigen deels wat de stand van zaken reed deed vermoeden nl. een gRPC API is out of the box
 meer performant dan een standaard REST API. De cijfers die hier naar boven komen in tabel\ref{tab:REST_RESTcompressie_gRPCUni_gRPCMultipercentage} m.b.t.
 het hier ge\"{\i}mplementeerde REST API met JSON zonder compressie en het gRPC API met Unary methode wijzen, bij heel kleine datasets van maximum enkele honderd bytes, erop dat gRPC
-daarbij ongeveer dubbel zo snel is. Bij iets grotere datasets tot de limiet getest in dit onderzoek, welke 43,46MB bedraagt, stijgt dit verschil tot 3,5 keer.
-De grafiek in figuur~\ref{fig:RESTRESTcompressiegRPCUnigRPCMulti} toont ook heel duidelijk aan dat het standaard REST API met JSON het minst performant is.\\
+daarbij ongeveer dubbel zo snel is. Bij iets grotere datasets tot aan de limiet waarmee getest werd in dit onderzoek, nl. een grootte van 43,46MB, stijgt dit verschil tot 3,5 keer.
+De grafiek in figuur~\ref{fig:RESTRESTcompressiegRPCUnigRPCMulti} toont ook heel duidelijk aan dat een standaard REST API met JSON het minst performant is.\\
 In een gRPC API wordt de data reeds standaard gecomprimeerd. Bij een REST API is dit echter ook een optie, zo werd reeds in de stand van zaken naar voor gebracht. Wanneer er
 in tabel\ref{tab:REST_RESTcompressie_gRPCUni_gRPCMultipercentage} naar de verhouding tussen REST gecomprimeerd en gRPC Uni gekeken wordt valt op dat het REST API met gebruik van compressie
-zelfs vaak het meeste performantste is. Het is de moeite waard om nogmaals te melden dat gzip gesupporteerd wordt door nagenoeg alle moderne browsers terwijl dit juist een pijnpunt is voor gRPC.\\
+zelfs vaak het meeste performante is. Het is de moeite waard om nogmaals te melden dat gzip gesupporteerd wordt door nagenoeg alle moderne browsers terwijl dit juist een pijnpunt is voor gRPC.\\
 
 \paragraph{Meervoudige requests}
 De eerdere resultaten bekomen bij de testen van de enkelvoudige requests zijn gelijkaardig aan diegene die hier kunnen vastgesteld worden. Weer is het standaard
-REST API zonder compressie het minst performante. Het ziet er zelfs naar uit dat de verhouding iets groter geworden is. Weer opmerkelijk komt het REST API
+REST API zonder compressie het minst performante. Het ziet er zelfs naar uit dat de verhouding iets groter is geworden. Weer opmerkelijk komt het REST API
 met compressie echter naar boven als meest performante.\\
 
 Gezien het mogelijk is om een REST API ongeveer even performant te maken als een gRPC API lijkt het bij het overwegen van beide API's voor een nieuwe applicatie
 belangrijk rekening te houden met het gegeven dat gRPC niet ondersteund wordt door browsers. Daar komt bij dat REST zeer wijdverspreid en veelgebruikt is, zoals gebleken
-uit de stand van zaken, en, ondanks dat gRPC in opmars is, het verschil tussen beide technologie\"en op dat vlak groot is. Voor beide API's is het noodzakelijk om
+uit de stand van zaken en, ondanks dat gRPC in opmars is, het verschil tussen beide technologie\"en op dat vlak groot is. Voor beide API's is het noodzakelijk om
 de client te informeren over de werking, het zgn. contract. Voor REST zijn er op vandaag verschillende mogelijkheden om het API contract bloot te stellen aan clients.
 Voor gRPC komt de moeilijkheid van het delen van het .proto bestand daarentegen aan bod. Tot slot het reeds meermaals herhaalde punt nl. dat browsers REST ondersteunen, en zelfs
 een REST API dat gebruik maakt van compressie, terwijl dit voor gRPC niet het geval is.
 
 \paragraph{Toekomstig onderzoek}
 Om dit onderzoek zo compleet mogelijk te maken werd het gRPC API voorzien van een functie dat een stream doorgeeft.
-De belangstelling hiervoor is snel gedaald zodra bleek dat deze, zelfs bij grotere datasets die niet in één request konden verzonden worden.
-De implementatie was echt eenvoudig zonder dat er bij de server applicatie bepaalde processen vooraf gingen aan het kunnen versturen van de dataset.
-Ook was er geen achterliggen verwerkingsproces bij de client na ontvangst van de data.
+De belangstelling hiervoor is snel gedaald zodra bleek dat deze functie, zelfs bij grotere datasets die niet in één request konden worden verzonden, minder performant is.
+De implementatie was echter eenvoudig, zonder dat er bij de server applicatie bepaalde processen vooraf gingen aan het kunnen versturen van de dataset.
+Ook was er geen achterliggend verwerkingsproces bij de client na ontvangst van de data.
 Het lijkt een interessant onderzoeksonderwerp om na te gaan voor welke scenario's een dergelijk streaming API wel de kroon spant en,
 gezien de grotere technische moeilijkheid, hoe de implementatie dan praktisch zou verlopen.
