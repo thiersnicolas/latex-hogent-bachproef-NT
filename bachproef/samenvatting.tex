@@ -36,38 +36,39 @@
 % De samenvatting in de hoofdtaal van het document
 
 \chapter*{\IfLanguageName{dutch}{Samenvatting}{Abstract}}
-In dit onderzoek wordt het performantieverschil tussen een REST API en een gRPC API beschouwd bij het versturen van datasets van variërende grootte.
-Beide technologieën zijn API's en daarmee helpen zij de communicatie tussen twee applicaties via HTTP te faciliteren. gRPC is een tamelijk recente ontwikkeling die
+In dit onderzoek wordt het performantie verschil tussen een REST API en een gRPC API beschouwd bij het versturen van datasets van vari\"erende grootte.
+Beide technologie\"en zijn API's en daarmee helpen zij de communicatie tussen twee applicaties via HTTP te faciliteren. gRPC is een tamelijk recente ontwikkeling die
 dankzij een speciaal serialisatie- en compressieproces zeer performant zou moeten zijn. De vraag rijst dan in welke mate het sneller zou zijn dan REST en is het dat
 in alle omstandigheden.\\
-Wanneer de verschillen tussen de beide API's bekeken worden vallen enkele punten extra in de kijker.
+Wanneer de verschillen tussen de beide API's bekeken worden, lopen enkele aspecten extra in de kijker.
 Zo kan bij REST nog steeds het HTTP1.1 protocol gebruikt worden, t.o.v. gRPC dat enkel via het performantere HTTP2 communiceert.
 gRPC gebruikt echter specifieke delen van het HTTP2 protocol waar moderne browsers geen ondersteuning voor bieden
 waardoor voor dergelijke communicatie een extra proxy moet voorzien worden.
 gRPC serialiseert en comprimeert alle data d.m.v. protocol buffers waardoor het, op vlak van performantie, een overwicht zou verkrijgen t.a.v. REST.
-Bij REST wordt data voornamelijk als JSON verzonden, welke veel verboser is dan de geserialiseerde data via gRPC.
+Bij REST wordt data voornamelijk als JSON verzonden, welk meer uitvoerig is dan de geserialiseerde data via gRPC.
 Er is echter geen verplichting voor een specifiek formaat waardoor bij REST data eventueel ook gecomprimeerd kan worden.
-Er bestaat zelfs een specifieke Header die aangeeft van welk compressie algoritme gebruikt moet worden.
-In tegenstelling tot gRPC is het gebruik van REST wijdverspreid en zijn er voldoende software ontwikkelaars met kennis ter zake om een REST API vlot te implementeren.
+Er bestaat zelfs een specifieke Header die aangeeft van welk compressiealgoritme gebruikt moet worden.
+In tegenstelling tot gRPC is het gebruik van REST wijdverspreid en zijn er voldoende software-ontwikkelaars met kennis ter zake om een REST API vlot te implementeren.
 Voor beide API's is het nodig een betrouwbaar en duidelijk contract aan te bieden aan een eventuele client.
-Voor REST zijn er reeds veel oplossing die een API documenteren en eventueel zelfs code genereren.
+Voor REST zijn er reeds veel oplossingen die een API documenteren en eventueel zelfs code genereren.
 Bij gRP dient er een .proto bestand uitgewisseld te worden tussen server en client waarmee de nodige code door protocol buffers gegenereerd kan worden.
-Over hoe de uitwisseling van dit bestand best dient te verlopen lijkt nog geen consensus te zijn gevonden.\\
-Elke software ontwikkelaar of applicatie-architect dient bij de implementatie van een applicatie te evalueren wat de concrete noodzaken
-zijn en te overwegen welke technologi\"en daar het beste een oplossing voor bieden. Deze overwegen kan enkel gemaakt worden met kennis van zaken. Performantie is
-steeds een belangrijke overwegen en vaak een doorslaggevende factor.
+Over hoe de uitwisseling van dit bestand best dient te verlopen, lijkt nog geen consensus te zijn gevonden.\\
+Elke software-ontwikkelaar of applicatie-architect dient bij de implementatie van een applicatie te evalueren wat de concrete noodzaken
+zijn en te overwegen welke technologie\"en daar het beste een oplossing voor bieden. Deze overwegng kan enkel gemaakt worden met kennis van zaken. Performantie is
+steeds een belangrijk en vaak een doorslaggevende factor.
 Het onderwerp van deze scriptie, wat het effectieve performantie verschil is tussen een REST API en een gRPC API voor
 datasets van variërende grootte, kan een deel van de puzzel aanbrengen. Zeker aangevuld met de vergelijkende studie in de stand van zaken in dit onderzoek.\\
 Voor het onderzoek worden 2 applicaties, client en provider, in Java programmeertaal geschreven, met behulp van het Quarkus framework.
-Beide applicaties krijgen 2 rest implementaties, \"e\"en dat data als JSON verzendt en het andere deze data met behulp van gzip zal comprimeren alvorens te verzenden.
+Beide applicaties krijgen 2 rest implementaties, één dat data als JSON verzendt en het andere data met behulp van gzip zal comprimeren alvorens te verzenden.
 Ook zijn er 2 gRPC implementaties, het eerste zal de te verzenden data met protocol buffers serialiseren en daarna verzenden en het tweede,
 ten volle gebruik makend van HTTP2 functionaliteit, geeft de geserialiseerde data middels een stream door.
 De server applicatie zal gehost worden op OpenShift van RedHat terwijl de client applicatie deze vanop een pc aanspreekt.
-Voor de performantietesten wordt het tijdsverloop geregistreerd bij start van het aanroepen van de server door de client
-tot de gevraagde data bij de client toekomst en gedeserialiseerd is. Dit proces wordt voor verschillende datasets uitgevoerd.
-Ook worden grote datasets in stukken verzonden om het verschil in performantie te beschouwen.\\
+Tijdens de performantie-testen wordt het tijdsverloop geregistreerd bij aanvang van het aanroepen van de server door de client
+tot de gevraagde data bij de client toekomt en gedeserialiseerd is. Dit proces wordt voor verschillende datasets herhaald.
+Ook worden grotere datasets in stukken verzonden om het verschil in performantie te beschouwen.\\
 De resultaten geven antwoord op de onderzoeksvraag door aan te tonen dat een standaard REST API, met de opzet gegeven in de methodologie,
-tot 3,5 keer trager is dan een standaard gRPC API. Maar wanneer er echter gecomprimeerde data verzonden wordt via het REST API blijft dit ongeveer even performant te zijn als gRPC.
+tot 3,5 keer trager is dan een standaard gRPC API. Maar wanneer er echter gecomprimeerde data verzonden wordt via het REST API, blijft dit ongeveer even performant te zijn als gRPC.
 Via gRPC een stream doorgeven blijkt ook geen heil te bieden met deze opzet.
 De bedenking wordt ten slotte gemaakt dat REST een volwassen technologie is die zeer veel gebruikt en algemeen gekend is terwijl gRPC in verhouding een nog tamelijk recente ontwikkeling is.
-Rest, zelfs bij het verzenden van gecomprimeerde data, ondersteund wordt door nagenoeg alle browsers. En ten slotte dat er nog vragen onbeantwoord blijven omtrent het delen van het .proto bestand.
+REST wordt, zelfs bij het verzenden van gecomprimeerde data, ondersteund door nagenoeg alle browsers.
+Tot slot wordt vastgesteld dat er nog vragen onbeantwoord blijven omtrent het delen van het .proto bestand.

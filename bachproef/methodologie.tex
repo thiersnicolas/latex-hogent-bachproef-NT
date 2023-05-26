@@ -144,7 +144,7 @@ voorziet zodat de configuratie opzet en het deployment proces makkelijker verlop
 Hierdoor zou er sneller moeten gestart kunnen worden met het echte doel nl. het hosten en deployen van de applicatie.
 OpenShift heeft ook een administrator en developer view, waarbij vooral de developer view het gemakkelijk maakt om applicaties te gaan deployen
 zonder de interne werken van Kubernetes door-en-door te moeten kennen.
-Tot slot biedt Red Hat een gratis sandbox aan om een maand lang mee te werken. Verder in de tekst wordt met OpenShift of Kubernetes beiden gerefereerd naar de deploy omgeving,
+Tot slot biedt Red Hat een gratis sandbox aan om een maand lang mee te werken. Verder in de tekst wordt met OpenShift of Kubernetes beiden gerefereerd naar de deploy omgeving
 omdat OpenShift uiteindelijk ook gewoon Kubernetes is.\newline
 ~\autocite{redhatwhatiskubernetes}\\
 ~\autocite{redhatopenshiftkubernetes}\\
@@ -222,10 +222,6 @@ Zowel Uni als Multi representeren een stream en zijn asynchrone types. Uni omvat
 Voor Uni zal er gewoon op het item gewacht worden tot dit ontvangen is. Voor een Multi zal er gesubscribed worden en zullen er drie functies nodig zijn om
 de items te verwerken. De eerste functie, van het type Consumer~\parencite{Consumer}, gaat elk item verwerken, de tweede functie, weer het type Consumer~\parencite{Consumer},
 gaat eventuele failures verwerken en de derde functie, van het type Runnable~\parencite{Runnable} wordt aangeroepen wanneer de call voltooid is.\newline
-
-%+++ gRPC Quarkus properties en SSL configuratie uitleg +++
-%+++ implementatie van gRPC duurde veel langer door de opzet van de omgeving, bij gRPC is TSL ingebakken in de applicatie en niet enkel een probleem voor de infrastructuur
-
 ~\autocite{quarkusgRPCclient}\\
 ~\autocite{SmallRyeMutiny}\\
 ~\autocite{MultiSubscribing}\\
