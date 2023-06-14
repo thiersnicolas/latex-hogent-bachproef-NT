@@ -9,8 +9,8 @@
 
 Voor het analyseren van het performantieverschil tussen REST en gRPC is er voor beide technologie\"en een server nodig die een API aanbiedt dat geconsumeerd kan worden en
 een client die deze server aanroept. Bij dit onderzoek zal de focus niet gelegd worden op het bekomen van benchmark testen waarbij alle factoren die invloed kunnen hebben
-zoveel mogelijk vermeden of uitgeschakeld worden. Er wordt getracht een realistisch scenario na te bootsen waarbij, in de praktijk, essenti\"ele stappen van zowel REST als gRPC
-ook effectief uitgevoerd worden.
+zoveel mogelijk vermeden of uitgeschakeld worden. Er wordt getracht een realistisch scenario na te bootsen waarbij, voor de in de praktijk,
+essenti\"ele stappen van zowel REST als gRPC ook effectief uitgevoerd worden.
 De grootte van de verzonden dataset tegenover de tijdsduur tussen de start en einde van de request, m.a.w. tussen het aanroepen van het API door de client
 tot het moment waarop alle gevraagde data bij de client toegekomen is, vormt het belangrijkste vergelijkingspunt.
 Er zullen verschillende datasets verstuurd worden opdat kan worden ge\"evalueerd in hoeverre deze grootte een impact heeft op de performantie.
@@ -23,7 +23,7 @@ zal uitmaken van dit vergelijkend onderzoek. Tot slot zal de performantie van gR
 \label{sec:opzet}
 
 Zowel de server als client applicatie worden, in aparte modules, in \'e\'en groot Gradle project geplaatst, volgens de principes van Clean Architecture. Hoewel dit
-voor een kleine benchmark applicatie wat overkill lijkt, worden zoveel mogelijk best-practices van binnen de codeer wereld gevolgd. Elke applicatie start immers klein.
+voor een kleine benchmark applicatie wat overkill lijkt, worden zoveel mogelijk best practices gevolgd. Elke applicatie start immers klein.
 Gradle is een build automation tool dat ook dependency management verzorgt, waardoor het als alternatief geldt voor Maven en Ant.
 Deze twee modules kunnen apart gebuild en gedeployed worden.\newline
 ~\autocite{Gradle}\\
@@ -38,14 +38,14 @@ Een persoon instantie bevat 5 variabelen die tijdens het genereren van de data m
 en RandomDataGenerator~\parencite{RandomDataGenerator} van Apache Commons opgevuld worden met willekeurige tekst of cijfers naargelang het type van variabele.
 Voor elk gevraagd aantal zal de eerste request als opwarming dienen en niet gebruikt worden als vergelijking.\\
 
-De Java applicatie is ontwikkeld met behulp van het Quarkus framework. Quarkus geldt als Cloud-Native Java omdat het een aantal pijnpunten van legacy
-Spring en SpringBoot projecten gaat tackelen: Bij de opkomst van Cloud Computing hadden de meeste Java applicaties problemen met resources en start-up tijden.
+De Java applicatie wordt ontwikkeld met behulp van het Quarkus framework. Quarkus geldt als Cloud-Native Java omdat het een aantal pijnpunten van legacy
+Spring en SpringBoot projecten tackelt. Bij de opkomst van Cloud Computing hadden de meeste Java applicaties problemen met resources en start-up tijden.
 Spring en SpringBoot applicaties hebben voornamelijk bij de opstart heel veel geheugen nodig, waardoor dit ook moet gereserveerd blijven wanneer de applicatie aan het draaien is.
-Hierdoor maak je geen effici\"ent gebruik van je middelen, met ook hogere kosten als gevolg. Quarkus (en andere Cloud-Native Java frameworks) kent ook een, in vergelijking met Spring,
+Hierdoor wordt geen effici\"ent gebruik van middelen gemaakt, met ook hogere kosten als gevolg. Quarkus (en andere Cloud-Native Java frameworks) kent ook een, in vergelijking met Spring,
 zeer korte opstarttijd door bijvoorbeeld (in combinatie met GraalVM) ahead-of-time compilatie te voorzien en dode code te verwijderen.
-Praktisch kunnen opstarttijden gereduceerd worden tot een paar milliseconden alsook worden de executables (meestal docker images) een heel pak kleiner.
+Praktisch kunnen opstarttijden gereduceerd worden tot een paar milliseconden, alsook worden de executables (meestal docker images) kleiner.
 Hierdoor kan Java in de cloud weer concurrentie aangaan met scripting-talen zoals Python en TypeScript. Deze hebben nl. niet dezelfde opstart moeilijkheden als Java.
-Tot slot biedt Quarkus biedt zowel ondersteuning voor REST als voor gRPC, een primaire vereiste voor deze applicatie.\newline
+Tot slot biedt Quarkus zowel ondersteuning voor REST als voor gRPC, een primaire vereiste voor deze applicatie.\newline
 ~\autocite{reasonQuarkus,whatisQuarkus,reasonQuarkus2,quarkusAbout}\\
 
 Voor de REST API maakt Quarkus gebruik van RESTEasy, een Jakarta REST-implementatie. Jakarta REST is een REST API-standaard voor Java.
@@ -76,8 +76,7 @@ de URI van de applicatie aangevuld met ''/people5/cleardata''. Hier worden ook w
 specifi\"eren en nog een @Produces met ''application/json'' voor het data formaat aan te geven. Indien de cache wordt leeggemaakt is dit voor beide beschikbare formaten van toepassing.
 Dit endpoint geeft een lijst terug met de eerder gevraagde hoeveelheden die nu in de cache zitten.
 Na het leegmaken van de cache zou dit dus steeds een lege lijst moeten zijn.\newline
-~\autocite{quarkusREST,Jakarta}
-~\\
+~\autocite{quarkusREST,Jakarta}\\
 
 Voor het gRPC API wordt gestart vanaf de Quarkus ''tutorial Getting Started With gRPC''~\parencite{quarkusgRPC}.
 Bij gRPC moet er een bestand gemaakt worden, met .proto als extensie, waarin alle procedures, welke ter beschikking zijn, worden vastgelegd.
@@ -118,10 +117,7 @@ die van het REST API. Indien dezelfde zou gebruikt worden zouden de Person5 obje
 wat de performantie mogelijks negatief zou impacteren. Er zou kunnen geopperd worden dat het omzetten van het domein object naar de gegenereerde klasse bij een gRPC API steeds nodig
 zal zijn en er dus ook rekening mee gehouden dient te worden bij het evalueren van de performantie, het is echter ook bij REST best practice om het domein niet rechtstreeks
 via een API bloot te stellen, maar daarentegen om te zetten naar zogenaamde data transfer objects.\newline
-~\autocite{quarkusgRPC}\\
-~\autocite{DTO}\\
-~\autocite{gRPCBestPractices}\\
-~\autocite{builderPattern}\\
+~\autocite{quarkusgRPC,DTO,gRPCBestPractices,builderPattern}\\
 
 \begin{figure}[ht]
     \centering
@@ -147,32 +143,29 @@ OpenShift heeft ook een administrator en developer view, waarbij vooral de devel
 zonder de interne werken van Kubernetes door en door te moeten kennen.
 Tot slot biedt Red Hat een gratis sandbox aan om een maand lang mee te werken. Verder in de tekst wordt met OpenShift of Kubernetes beiden gerefereerd naar de deploy omgeving
 omdat OpenShift uiteindelijk ook gewoon Kubernetes is.\newline
-~\autocite{redhatwhatiskubernetes}\\
-~\autocite{redhatopenshiftkubernetes}\\
-~\autocite{redhatopenshift}
+~\autocite{redhatwhatiskubernetes,redhatopenshiftkubernetes,redhatopenshift}\\
 
 Om een microservice met een REST API in Kubernetes opgezet te krijgen, zijn er drie configuratie bestanden nodig: een deployment config,
 een service config en een route config.~\parencite{openshiftDeployment}
 \begin{itemize}
     \item Deployment config: bevat onder andere de docker image die gebruikt moet worden, de namespace en de resource reservations zoals geheugen en CPU.
     \item Service config: is de interne DNS binnen Kubernetes en laat applicaties toe om andere applicaties via service naam aan te spreken.
-    \item Route config: is een config om services extern beschikbaar te stellen. Dit houdt in dat je van buiten de Kubernetes cluster (e.g., web applicatie,
-    laptop, \ldots aan je deployment kan)
+    \item Route config: is een config om services extern beschikbaar te stellen. Dit houdt in dat er van buiten de Kubernetes cluster connectie met de deployment kan gemaakt worden.
 \end{itemize}
 
-Kubernetes deployments zijn eenvoudig in een REST context. Voor gRPC blijkt het toch uitdagender te zijn door de harde dependency van gRPC op TLS\/SSL.
-De Kubernetes\/OpenShift routes moeten ook geconfigureerd worden om, in plaat van op de Ingress controllers, TLS
-verificatie over te laten aan de deployments (i.e., containers\/PODs), dus de applicatie zelf. Dit vereiste in een eerste stap dat TLS terminatie van de route
+Kubernetes deployments zijn eenvoudig in een REST context. Voor gRPC blijkt het toch uitdagender te zijn door de harde dependency van gRPC op TLS/SSL.
+De Kubernetes/OpenShift routes moeten ook geconfigureerd worden om, in plaat van op de Ingress controllers, TLS
+verificatie over te laten aan de deployments (i.e., containers/PODs), dus de applicatie zelf. Dit vereiste in een eerste stap dat TLS terminatie van de route
 geconfigureerd werd als ''passthrough'' in plaats van ''edge''.
 
 Daarenboven zijn er ook gevalideerde certificaten noodzakelijk doordat gRPC geen manueel getekende certificaten toelaat.
 Hiervoor wordt er gebruikgemaakt van Let's Encrypt om certificaten te genereren.
-OpenShift\/Kubernetes kent het concept van operators: dit zijn componenten binnen de cluster die heel wat infrastructuur werk overnemen.
+OpenShift/Kubernetes kent het concept van operators: dit zijn componenten binnen de cluster die heel wat infrastructuur werk overnemen.
 Bepaalde installaties (bv. Kafka, cert manager, \ldots) worden hierdoor beschikbaar op verzoek.
 Zo kan een cert-manager operator ge\"{\i}nstalleerd, een issuer geconfigureerd en een certificate request gegenereerd worden.
-Deze request wordt dan opgeslagen in een Kubernetes secret en ge\"{\i}njecteerd in een Kubernetes\/OpenShift deployment.
+Deze request wordt dan opgeslagen in een Kubernetes secret en ge\"{\i}njecteerd in een Kubernetes/OpenShift deployment.
 Op deze manier krijgt de applicatie direct de nieuwe certificaten toegewezen.
-De verschillende resource files zullen kunnen worden teruggevonden in de folder application\_server\/configuration/metadata.
+De verschillende resource files zullen kunnen worden teruggevonden in de folder ''application\_server\textbackslash{}configuration\textbackslash{}metadata''.
 
 De server applicatie werd gedeployed naar OpenShift van Red Hat. Op OpenShift is HTTP 2 en dus ook gRPC connectiviteit steeds met gebruik van het TLS protocol.
 Gezien het gebruik van TLS bij gRPC ook als best practice gezien wordt, zoals eerder gemeld in de stand van zaken, zal het hier mee onderdeel uitmaken van performantie testen.\newline
@@ -187,9 +180,9 @@ Voor de REST client wordt een interface bij Quarkus kenbaar gemaakt als REST cli
 zodat Quarkus weet welke configuratie moet gebruikt worden voor deze client.  Enkel de url en scope properties zijn hierbij nodig waarbij de url slaat op de url van de
 REST API die wordt aangesproken en de scope aangeeft welke CDI scope deze client dient te krijgen, in dit geval Singleton.
 Verder wordt de interface zelf voorzien van de @Path annotatie met als String value een deel van de url welke
-aan alle endpoints gemeen is, meer specifiek /people5. Elke methode die voorzien wordt in de interface staat voor een endpoint dat kan aangesproken worden.
+aan alle endpoints gemeen is, meer specifiek ''/people5''. Elke methode die voorzien wordt in de interface staat voor een endpoint dat kan aangesproken worden.
 Boven de clearData methode staat een @POST annotatie waarmee wordt aangegeven dat bij deze methode de POST HTTP-method moet gebruikt worden alsook
-nog een @Path annotatie met ´''/cleardata'' als value die de url verder specificeert. De people5 methode krijgt een @GET en een @Path annotatie, waarbij die laatste ''/{amount}''
+nog een @Path annotatie met ''/cleardata'' als value die de url verder specificeert. De people5 methode krijgt een @GET en een @Path annotatie, waarbij die laatste ''/\{amount\}''
 als value heeft. Deze methode heeft een parameter amount welke ook voorzien wordt van een @PathParam annotatie met ''amount'' als value zodat Quarkus
 deze parameter als path parameter zal gebruiken. De derde methode people5Compressed is buiten de naam identiek als de people5 methode maar hier gaat het endpoint een
 byte array ontvangen wat aangegeven wordt door de @Consumes annotatie voorzien van ''application/octet-stream''. Het omzetten van de byte array naar de Java objecten gebeurt
@@ -203,8 +196,7 @@ Voor de gRPC client moet weer een .proto bestand voorzien worden op basis waarva
 is er door de code generatie een People5Grpc klasse beschikbaar waarmee het gRPC API van de server kan worden aangesproken. Deze klasse kan door gebruik van de
 @GrpcClient annotatie ge\"{\i}njecteerd worden in de service klasse welke de functionaliteit verder zal implementeren voor gebruik door de testen. Deze annotatie
 kan voorzien worden van een String value element name die door Quarkus zal gebruikt worden om de gRPC client te configureren. In de properties worden enkele properties voorzien
-die Quarkus nodig heeft. Quarkus weet dankzij de opgegeven element name welke properties hij voor deze specifieke client moet gebruiken.\newline
-
+die Quarkus nodig heeft. Quarkus weet dankzij de opgegeven element name welke properties hij voor deze specifieke client moet gebruiken.
 \begin{itemize}
     \item ''use-quarkus-grpc-client'' wordt op false gezet zodat de gRPC implementatie gebaseerd op Netty gebruikt wordt. Deze werkt op OpenShift.
     \item ''port'' dient om de poort aan te geven via welke de communicatie met het gRPC API zal gebeuren
@@ -220,9 +212,7 @@ Zowel Uni als Multi representeren een stream en zijn asynchrone types. Uni omvat
 Voor Uni zal er gewoon op het item gewacht worden tot dit ontvangen is. Voor een Multi zal er gesubscribed worden en zullen er drie functies nodig zijn om
 de items te verwerken. De eerste functie, van het type Consumer~\parencite{Consumer}, gaat elk item verwerken, de tweede functie, weer het type Consumer~\parencite{Consumer},
 gaat eventuele failures verwerken en de derde functie, van het type Runnable~\parencite{Runnable} wordt aangeroepen wanneer de call voltooid is.\newline
-~\autocite{quarkusgRPCclient}\\
-~\autocite{SmallRyeMutiny}\\
-~\autocite{MultiSubscribing}\\
+~\autocite{quarkusgRPCclient,SmallRyeMutiny,MultiSubscribing}\\
 
 De performantie testen worden in dit deel van het project voorzien. De testklasse People5RestServiceTest omvat de performantietesten voor het REST API
 en de People5GrpcServiceTest omvat de testen voor het gRPC API. Beiden maken gebruik van een hulp klasse TestHelper de oproepen naar de API's gaat doen,
@@ -242,8 +232,8 @@ tot het totale gevraagd aantal is ontvangen. Ook hier wordt de tijd geregistreer
 verschillende calls van de opgegeven batch grootte.\\
 
 De hele opzet in deze methodiek kan een effect hebben op de resultaten die zullen bekomen worden. Het wijzigen ervan zal dus kunnen maken dat de resultaten afwijken.
-Bij het beschouwen van de hierbij geregistreerde performantie verschillen moet daar rekening mee gehouden worden. Grote verschillen en verhouding tussen resultaten zullen echter
-ook na aanpassing van de test modaliteiten gelijkaardig blijven, waardoor het nog mogelijk zal zijn conclusie te maken en voordeel te halen uit dit onderzoek.\\
+Bij het beschouwen van de hierbij geregistreerde performantie verschillen moet daar rekening mee gehouden worden. Grote verschillen en verhoudingen tussen resultaten zullen echter
+ook na aanpassing van de test modaliteiten gelijkaardig blijven, waardoor het mogelijk zal zijn een conclusie te maken en voordeel te halen uit dit onderzoek.\\
 
 De broncode van dit project, dat zowel de server als client applicatie omvat, is publiek beschikbaar op Github via https://github.com/thiersnicolas/gRPC\_vs\_REST.git
 
@@ -306,12 +296,13 @@ Alle datasets zullen vier maal opgevraagd worden waarna het gemiddelde ervan gen
     \label{tab:Gevraagdedatasets}
 \end{table}
 
-Voor de 2 REST calls en de getPeople functie van het gRPC API is het simpelweg bovenstaande lijst door te geven aan de testPerformance\_singularRequests methode
+Voor de 2 REST calls en de getPeople functie van het gRPC API is het simpelweg de lijst in tabel \ref{tab:Gevraagdedatasets} doorgeven aan de testPerformance\_singularRequests methode
 van de TestHelper. De getPeopleStream methode van het gRPC API geeft een object van het type Multi terug, waarover eerder reeds meer informatie werd gegeven.
 Om deze methode te testen is er een nieuwe functie gemaakt welke door middel van een AtomicInteger de tel bijhoudt van alle ontvangen items en bij het voltooien van
-de gRPC functie een AtomicBoolean op true zet. Wanneer die AtomicBoolean op true staat wordt de controle teruggegeven aan de TestHelper. Hieruit bleek dat effectief
-alle gevraagde items ontvangen werden. Om een correcte performantiemeting te kunnen doen dient de AtomicInteger terug verwijderd te worden gezien deze de metingen
-negatief be\"{\i}nvloedt\"\\. De AtomicBoolean wordt enkel en alleen opgeroepen wanneer de oproep voltooid is waardoor de impact hiervan nagenoeg geen impact zal hebben.
+de gRPC functie een AtomicBoolean op true zet. Wanneer die AtomicBoolean op true staat wordt de controle teruggegeven aan de TestHelper. Tijdens het uitvoeren van
+de testen bleek dat effectief alle gevraagde items ontvangen werden maar tevens dat er een significate impact was op de performantie.
+Om een correcte performantiemeting te kunnen doen dient de AtomicInteger terug verwijderd te worden.
+De AtomicBoolean wordt enkel en alleen gewijzigd wanneer de oproep voltooid is waardoor dit nagenoeg geen impact zal hebben.
 
 \section{Meervoudige requests}
 
@@ -380,7 +371,4 @@ De server applicatie is op heden gedeployed op OpenShift en zal maar tijdelijk b
 Deze applicatie kan echter gemakkelijk opnieuw gedeployed worden op OpenShift dankzij de uitleg in sectie ~\ref{sec:opzet} onder paragraaf Server applicatie.
 Voor andere cloud omgeving kan het zijn dat er bijkomende aanpassingen nodig zijn aan de broncode.\\
 De client applicatie kan gewoon lokaal gebruikt worden door de gemaakte testen op te starten. Deze zullen .txt bestanden genereren welke de metingen bevatten.
-
-
-
 
